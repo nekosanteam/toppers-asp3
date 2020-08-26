@@ -22,15 +22,16 @@ TOOLDIR = $(SRCDIR)/arch/gcc
 #
 #  objcopyとobjdumpは，それぞれ，gobjcopyとgobjdumpを用いる．
 #
-CC = cc
-CXX = c++
-AS = as
-LD = ld
-AR = ar
-NM = nm
-RANLIB = ranlib
-OBJCOPY = objcopy
-OBJDUMP = objdump
+#CC = cc
+#CXX = c++
+#AS = as
+#LD = ld
+#AR = ar
+#NM = nm
+#RANLIB = ranlib
+#OBJCOPY = objcopy
+#OBJDUMP = objdump
+#GCC_TARGET =
 
 #
 #  offset.hは使用しない
@@ -43,7 +44,7 @@ OMIT_OFFSET_H = true
 #  カーネルを関数単位でコンパイルする時には，未使用関数の警告を抑止する．
 #
 INCLUDES := $(INCLUDES) -I$(TARGETDIR) -I$(TOOLDIR)
-COPTS := -m32 -Werror $(COPTS)
+COPTS := -Werror $(COPTS)
 ifdef KERNEL_FUNCOBJS
 	COPTS := -Wno-unused-function $(COPTS)
 endif

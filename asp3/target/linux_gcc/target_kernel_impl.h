@@ -131,6 +131,20 @@
 #define TASK_STACK_MERGIN	8U
 #define DEFAULT_ISTKSZ		SIGSTKSZ	/* シグナルスタックのサイズ */
 
+#elif defined(__aarch64__)
+
+#define JMPBUF_PC			11			/* jmp_buf中でのPCの位置 */
+#define JMPBUF_SP			13			/* jmp_buf中でのSPの位置 */
+#define TASK_STACK_MERGIN	8U 
+#define DEFAULT_ISTKSZ		SIGSTKSZ	/* シグナルスタックのサイズ */
+
+#elif defined(__arm__)
+
+#define JMPBUF_PC			1			/* jmp_buf中でのPCの位置 */
+#define JMPBUF_SP			0			/* jmp_buf中でのSPの位置 */
+#define TASK_STACK_MERGIN	8U 
+#define DEFAULT_ISTKSZ		SIGSTKSZ	/* シグナルスタックのサイズ */
+
 #else
 #error architecture not supported
 #endif
@@ -516,15 +530,27 @@ extern void	start_r(void);
 	pc = (intptr_t) start_r;										\
 	PTR_MANGLE(pc);													\
 																	\
-	(p_tcb)->tskctxb.env[0].__jmpbuf[JMPBUF_PC] = pc;				\
+	*(intptr_t*)&(p_tcb)->tskctxb.env[0].__jmpbuf[JMPBUF_PC] = pc;  \
 																	\
 	sp = ((((intptr_t)((char *)((p_tcb)->p_tinib->stk)				\
 							+ (p_tcb)->p_tinib->stksz)) & ~0x0f)	\
 							- TASK_STACK_MERGIN);					\
 	PTR_MANGLE(sp);													\
 																	\
-	(p_tcb)->tskctxb.env[0].__jmpbuf[JMPBUF_SP] = sp;				\
+	*(intptr_t*)&(p_tcb)->tskctxb.env[0].__jmpbuf[JMPBUF_SP] = sp;  \
 }
+
+/*
+#define activate_context(p_tcb)											\
+{																		\
+	((intptr_t *) &((p_tcb)->tskctxb.env))[JMPBUF_PC]					\
+											= (intptr_t) start_r;		\
+	((intptr_t *) &((p_tcb)->tskctxb.env))[JMPBUF_SP]					\
+						= (intptr_t)((char *)((p_tcb)->p_tinib->stk)	\
+										+ (p_tcb)->p_tinib->stksz		\
+										- TASK_STACK_MERGIN);			\
+}
+*/
 
 /*
  *  割込みハンドラ番号とCPU例外ハンドラ番号の範囲の判定

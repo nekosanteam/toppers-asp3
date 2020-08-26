@@ -106,7 +106,7 @@ sil_dly_nse(ulong_t dlytim)
  */
 #if defined(__ppc__)
 #define SIL_ENDIAN_BIG				/* ビッグエンディアン */
-#elif defined(__i386__) || defined(__x86_64__)
+#elif defined(__i386__) || defined(__x86_64__) || defined(__aarch64__) || defined(__arm__)
 #define SIL_ENDIAN_LITTLE			/* リトルエンディアン */
 #endif
 

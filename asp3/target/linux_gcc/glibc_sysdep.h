@@ -23,16 +23,6 @@
 #ifndef _LINUX_I386_SYSDEP_H
 #define _LINUX_I386_SYSDEP_H 1
 
-/* Pointer mangling support.  */
-
-/*
-#  define PTR_MANGLE(var)	asm ("xorl %%gs:%c2, %0\n"		      \
-				     "roll $9, %0"			      \
-				     : "=r" (var)			      \
-				     : "0" (var),			      \
-				       "i" (offsetof (tcbhead_t,	      \
-						      pointer_guard)))
-*/
 #  define PTR_MANGLE(var)	asm ("xorl %%gs:%c2, %0\n"		      \
 				     "roll $9, %0"			      \
 				     : "=r" (var)			      \
@@ -48,18 +38,7 @@
 #ifndef _LINUX_X86_64_SYSDEP_H
 #define _LINUX_X86_64_SYSDEP_H 1
 
-/* Pointer mangling support.  */
-/*
-#  define PTR_MANGLE(var)	asm ("xor %%fs:%c2, %0\n"		      \
-				     "rol $2*" LP_SIZE "+1, %0"		      \
-				     : "=r" (var)			      \
-				     : "0" (var),			      \
-				       "i" (offsetof (tcbhead_t,	      \
-						      pointer_guard)))
-*/
-
-#define LP_SIZE	8
-
+#  define LP_SIZE	"8"
 #  define PTR_MANGLE(var)	asm ("xor %%fs:%c2, %0\n"		      \
 				     "rol $2*" LP_SIZE "+1, %0"		      \
 				     : "=r" (var)			      \
@@ -67,6 +46,28 @@
 				       "i" (0x30))
 
 #endif /* linux/x86_64/sysdep.h */
+
+#elif defined(__aarch64__)
+
+#ifndef _LINUX_AARCH64_SYSDEP_H
+#define _LINUX_AARCH64_SYSDEP_H 1
+
+extern uintptr_t __pointer_chk_guard_local;
+#  define PTR_MANGLE(var) \
+  (var) = (__typeof (var)) ((uintptr_t) (var) ^ __pointer_chk_guard_local)
+#  define PTR_DEMANGLE(var)     PTR_MANGLE (var)
+# endif
+
+#elif defined(__arm__)
+
+#ifndef _LINUX_ARM_SYSDEP_H
+#define _LINUX_ARM_SYSDEP_H 1
+
+extern uintptr_t __pointer_chk_guard_local;
+#  define PTR_MANGLE(var) \
+  (var) = (__typeof (var)) ((uintptr_t) (var) ^ __pointer_chk_guard_local)
+#  define PTR_DEMANGLE(var)     PTR_MANGLE (var)
+# endif
 
 #else
 

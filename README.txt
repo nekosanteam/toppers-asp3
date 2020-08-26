@@ -1,3 +1,18 @@
 TOPPERS/ASP3: 3.5.0 (https://www.toppers.jp/asp3-d-download.html)
-linux_gcc: (https://github.com/morioka/toppers-asp3-for-linux) + 3.5.0 update.
+linux_gcc: (https://github.com/morioka/toppers-asp3-for-linux) + 3.5.0 update + aarch64/arm support (partial).
+
+i386 向けにビルドするには -m32 オプションを指定します。(元ソースの指定を削除しました)
+指定しない場合は x86_64 向けになりますが、まだタスク切り替えができません。
+  mkdir build; cd build
+  ../configure.rb -T linux_gcc -o -m32
+
+aarch64/arm 向けには static バイナリを作成する必要があります。
+(PTR_MANGLE で参照する変数をリンクするため。)
+  mkdir build; cd build
+  ../configure.rb -T linux_gcc -b -static
+  生成された Makefile に、GCC_TARGET を記述してください (aarch64: aarch64-linux-gnu, arm: arm-linux-gnueabihf)
+  aarch64 では strict-aliasing の警告でエラー終了するため、KERNEL_CFLAGS に -fno-strict-aliasing を追加してください。
+  またタスク切り替えができません(x86_64 でも同様なので64bit対応が不十分の可能性あり)
+  arm では pass 3 が失敗します。./asp が生成できたので、とりあえず一度コミットします。
+
 
