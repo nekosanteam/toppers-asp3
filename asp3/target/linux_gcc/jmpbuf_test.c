@@ -7,7 +7,15 @@ typedef unsigned long       uintptr_t;
 
 jmp_buf point1;
 
-int func()
+int func1()
+{
+    int x;
+    setjmp(point1);
+
+    return 0;
+}
+
+int func2()
 {
     int x;
     setjmp(point1);
@@ -18,6 +26,7 @@ int func()
 #if defined(__aarch64__) || defined(__arm__)
 extern uintptr_t __pointer_chk_guard_local __attribute__ ((section (".data.rel.ro"))) __attribute__ ((visibility ("hidden"))) __attribute__ ((nocommon));
 #endif
+void* functions[] = { func1, func2 };
 
 int main(void)
 {
