@@ -3,7 +3,7 @@
  *      Toyohashi Open Platform for Embedded Real-Time Systems/
  *      Advanced Standard Profile Kernel
  * 
- *  Copyright (C) 2006-2018 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2006-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -35,7 +35,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: chip_timer.c 1009 2018-08-25 14:36:59Z ertl-hiro $
+ *  $Id: chip_timer.c 1437 2020-05-20 12:12:16Z ertl-hiro $
  */
 
 /*
@@ -58,7 +58,7 @@
  *  タイマの起動処理
  */
 void
-target_hrt_initialize(intptr_t exinf)
+target_hrt_initialize(EXINF exinf)
 {
 	/*
 	 *  OSタイマをフリーランニングコンペアモードに設定する．
@@ -85,7 +85,7 @@ target_hrt_initialize(intptr_t exinf)
  *  タイマの停止処理
  */
 void
-target_hrt_terminate(intptr_t exinf)
+target_hrt_terminate(EXINF exinf)
 {
 	/*
 	 *  OSタイマを停止する．
@@ -119,7 +119,7 @@ target_hrt_handler(void)
  *  オーバランタイマの初期化処理
  */
 void
-target_ovrtimer_initialize(intptr_t exinf)
+target_ovrtimer_initialize(EXINF exinf)
 {
 	/*
 	 *  OSタイマをインターバルタイマモードに設定する．
@@ -136,7 +136,7 @@ target_ovrtimer_initialize(intptr_t exinf)
  *  オーバランタイマの停止処理
  */
 void
-target_ovrtimer_terminate(intptr_t exinf)
+target_ovrtimer_terminate(EXINF exinf)
 {
 	/*
 	 *  OSタイマを停止する．

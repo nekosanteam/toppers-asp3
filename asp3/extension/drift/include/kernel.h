@@ -5,7 +5,7 @@
  * 
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2019 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,7 +37,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: kernel.h 1269 2019-10-02 16:34:35Z ertl-hiro $
+ *  $Id: kernel.h 1437 2020-05-20 12:12:16Z ertl-hiro $
  */
 
 /*
@@ -110,13 +110,13 @@ typedef	uint_t		EXCNO;		/* CPU例外ハンドラ番号 */
 /*
  *  処理単位の型定義
  */
-typedef void	(*TASK)(intptr_t exinf);
-typedef void	(*TMEHDR)(intptr_t exinf);
-typedef void	(*ISR)(intptr_t exinf);
+typedef void	(*TASK)(EXINF exinf);
+typedef void	(*TMEHDR)(EXINF exinf);
+typedef void	(*ISR)(EXINF exinf);
 typedef void	(*INTHDR)(void);
 typedef void	(*EXCHDR)(void *p_excinf);
-typedef void	(*INIRTN)(intptr_t exinf);
-typedef void	(*TERRTN)(intptr_t exinf);
+typedef void	(*INIRTN)(EXINF exinf);
+typedef void	(*TERRTN)(EXINF exinf);
 
 /*
  *  メモリ領域確保のための型定義
@@ -206,7 +206,7 @@ extern ER_UINT	can_act(ID tskid) throw();
 extern ER		get_tst(ID tskid, STAT *p_tskstat) throw();
 extern ER		chg_pri(ID tskid, PRI tskpri) throw();
 extern ER		get_pri(ID tskid, PRI *p_tskpri) throw();
-extern ER		get_inf(intptr_t *p_exinf) throw();
+extern ER		get_inf(EXINF *p_exinf) throw();
 extern ER		ref_tsk(ID tskid, T_RTSK *pk_rtsk) throw();
 
 /*
@@ -478,8 +478,8 @@ extern bool_t	xsns_dpn(void *p_excinf) throw();
  */
 #define TKERNEL_MAKER	UINT_C(0x0118)	/* カーネルのメーカーコード */
 #define TKERNEL_PRID	UINT_C(0x0007)	/* カーネルの識別番号 */
-#define TKERNEL_SPVER	UINT_C(0xf634)	/* カーネル仕様のバージョン番号 */
-#define TKERNEL_PRVER	UINT_C(0x3050)	/* カーネルのバージョン番号 */
+#define TKERNEL_SPVER	UINT_C(0xf635)	/* カーネル仕様のバージョン番号 */
+#define TKERNEL_PRVER	UINT_C(0x3060)	/* カーネルのバージョン番号 */
 
 /*
  *  キューイング回数の最大値

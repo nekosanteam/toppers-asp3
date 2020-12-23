@@ -34,7 +34,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tSCIF.c 1140 2019-01-08 06:15:04Z ertl-hiro $
+ *  $Id: tSCIF.c 1336 2019-12-05 16:47:22Z ertl-hiro $
  */
 
 /*
@@ -301,7 +301,10 @@ eTerminate_main(CELLIDX idx)
 		 *  送信FIFOが空になるまで待つ
 		 */
 		while ((sil_reh_mem(SCIF_SCFSR(ATTR_baseAddress))
-											& SCIF_SCFSR_TEND) == 0U) ;
+											& SCIF_SCFSR_TEND) == 0U) {
+			sil_dly_nse(100);
+		}
+
 		/*
 		 *  ポートのクローズ
 		 */

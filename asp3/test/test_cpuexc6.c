@@ -34,7 +34,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: test_cpuexc6.c 310 2015-02-08 13:46:46Z ertl-hiro $
+ *  $Id: test_cpuexc6.c 1439 2020-05-22 20:02:23Z ertl-hiro $
  */
 
 /* 
@@ -101,7 +101,7 @@
 #include "test_cpuexc.h"
 
 void
-alarm1_handler(intptr_t exinf)
+alarm1_handler(EXINF exinf)
 {
 	check_point(0);
 }
@@ -133,7 +133,7 @@ cpuexc_handler(void *p_excinf)
 static uint_t	task1_count = 0;
 
 void
-task1(intptr_t exinf)
+task1(EXINF exinf)
 {
 
 	switch (++task1_count) {
@@ -165,7 +165,7 @@ task1(intptr_t exinf)
 }
 
 void
-task2(intptr_t exinf)
+task2(EXINF exinf)
 {
 	ER_UINT	ercd;
 

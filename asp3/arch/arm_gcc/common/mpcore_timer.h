@@ -5,7 +5,7 @@
  * 
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2005-2019 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2005-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,7 +37,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: mpcore_timer.h 1235 2019-07-09 21:03:43Z ertl-hiro $
+ *  $Id: mpcore_timer.h 1437 2020-05-20 12:12:16Z ertl-hiro $
  */
 
 /*
@@ -103,12 +103,12 @@
 /*
  *  高分解能タイマの起動処理
  */
-extern void	target_hrt_initialize(intptr_t exinf);
+extern void	target_hrt_initialize(EXINF exinf);
 
 /*
  *  高分解能タイマの停止処理
  */
-extern void	target_hrt_terminate(intptr_t exinf);
+extern void	target_hrt_terminate(EXINF exinf);
 
 /*
  *  高分解能タイマの現在のカウント値の読出し
@@ -145,7 +145,7 @@ target_hrt_set_event(HRTCNT hrtcnt)
 Inline void
 target_hrt_raise_event(void)
 {
-	raise_int(INTNO_TIMER);
+	raise_int(MPCORE_IRQNO_TMR);
 }
 
 /*
@@ -239,12 +239,12 @@ mpcore_gtc_set_cvr(uint64_t cvr)
 /*
  *  高分解能タイマの起動処理
  */
-extern void	target_hrt_initialize(intptr_t exinf);
+extern void	target_hrt_initialize(EXINF exinf);
 
 /*
  *  高分解能タイマの停止処理
  */
-extern void	target_hrt_terminate(intptr_t exinf);
+extern void	target_hrt_terminate(EXINF exinf);
 
 /*
  *  高分解能タイマの現在のカウント値の読出し
@@ -301,7 +301,7 @@ target_hrt_clear_event(void)
 Inline void
 target_hrt_raise_event(void)
 {
-	raise_int(INTNO_TIMER);
+	raise_int(MPCORE_IRQNO_GTC);
 }
 
 /*
@@ -351,12 +351,12 @@ extern void	target_hrt_handler(void);
 /*
  *  オーバランタイマの初期化処理
  */
-extern void target_ovrtimer_initialize(intptr_t exinf);
+extern void target_ovrtimer_initialize(EXINF exinf);
 
 /*
  *  オーバランタイマの終了処理
  */
-extern void target_ovrtimer_terminate(intptr_t exinf);
+extern void target_ovrtimer_terminate(EXINF exinf);
 
 /*
  *  オーバランタイマの動作開始

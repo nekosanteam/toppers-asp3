@@ -2,8 +2,8 @@
 		TOPPERS/ASP3カーネル
 		ARM依存部 ユーザーズマニュアル
 
-		対応バージョン: Release 3.5.0
-		最終更新: 2019年10月6日
+		対応バージョン: Release 3.6.0
+		最終更新: 2020年12月23日
 
 このドキュメントは，TOPPERS/ASP3カーネルのARM依存部を使用するために必要
 な事項を説明するものである．
@@ -48,7 +48,7 @@
  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  の責任を負わない．
  
- $Id: arm_user.txt 1280 2019-10-06 01:47:52Z ertl-hiro $
+ $Id: arm_user.txt 1488 2020-12-20 10:26:43Z ertl-hiro $
 ----------------------------------------------------------------------
 
 ○目次
@@ -611,8 +611,8 @@ GIC-390 Errataと呼ばれる不具合があるチップを使用しているタ
 		gic_design.txt			GIC依存部 設計メモ
 
 	arm_gcc/test/			ARM向けテストプログラム
-		arm_cpuexc.c			ARM向けCPU例外処理のテスト
-		arm_cpuexc.cfg
+		arm_cpuexc1.c			ARM向けCPU例外処理のテスト(1)
+		arm_cpuexc1.cfg
 		arm_fpu1.c				ARM向けFPUのテスト(1)
 		arm_fpu1.cfg
 
@@ -626,5 +626,6 @@ GIC-390 Errataと呼ばれる不具合があるチップを使用しているタ
 	2019年3月20日	Release	3.4.0		MPCore依存部の構成を変更，
 										FPUサポートを追加
 	2019年10月6日	Release	3.5.0
+	2020年12月23日	Release	3.6.0
 
 以上

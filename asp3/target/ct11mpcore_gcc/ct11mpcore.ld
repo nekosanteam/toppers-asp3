@@ -1,5 +1,5 @@
 /*
- *  $Id: ct11mpcore.ld 1230 2019-07-04 06:46:50Z ertl-hiro $
+ *  $Id: ct11mpcore.ld 1419 2020-05-04 23:27:41Z ertl-hiro $
  */
 
 OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm","elf32-littlearm") 
@@ -12,8 +12,8 @@ PROVIDE(software_term_hook = 0);
 SECTIONS {
 	.text ALIGN(4) : {
 		__start_text = .;
-		*(.vector)
-		*(.text)
+		KEEP(*(.vector))
+		*(.text .text.*)
 		*(.glue_7t)
 		*(.glue_7)
 		__end_kernel = .;
@@ -23,7 +23,7 @@ SECTIONS {
 
 	.rodata ALIGN(4) : {
 		__start_rodata = .;
-		*(.rodata)
+		KEEP(*(.rodata .rodata.*))
 		__end_rodata = .;
 	}
 
@@ -31,7 +31,7 @@ SECTIONS {
 	__start_idata = .;
 	.data : AT(__start_idata) {
 		__start_data = .;
-		*(.data)
+		*(.data .data.*)
 		__end_data = .;
 	}
 	__end_idata = __start_idata + SIZEOF(.data);
@@ -40,7 +40,7 @@ SECTIONS {
 
 	.bss ALIGN(4) : {
 		__start_bss = .;
-		*(.bss)
+		*(.bss .bss.*)
 		*(COMMON)
 		__end_bss = .;
 	}

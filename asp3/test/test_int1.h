@@ -34,7 +34,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: test_int1.h 796 2017-07-19 14:21:08Z ertl-hiro $
+ *  $Id: test_int1.h 1439 2020-05-22 20:02:23Z ertl-hiro $
  */
 
 /* 
@@ -75,7 +75,7 @@
  */
 #ifndef TOPPERS_MACRO_ONLY
 
-extern void	task1(intptr_t exinf);
-extern void	isr1(intptr_t exinf);
+extern void	task1(EXINF exinf);
+extern void	isr1(EXINF exinf);
 
 #endif /* TOPPERS_MACRO_ONLY */

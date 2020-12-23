@@ -2,7 +2,7 @@
  *  TOPPERS Software
  *      Toyohashi Open Platform for Embedded Real-Time Systems
  * 
- *  Copyright (C) 2006-2018 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2006-2019 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -34,7 +34,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: mpcore.h 1055 2018-11-19 14:42:15Z ertl-hiro $
+ *  $Id: mpcore.h 1292 2019-10-08 09:08:47Z ertl-hiro $
  */
 
 /*
@@ -54,6 +54,7 @@
 #define CP15_ACTLR_SMP			UINT_C(0x00000020)
 #else /* __TARGET_ARCH_ARM == 6 */
 #define CP15_ACTLR_SMP			UINT_C(0x00000040)
+#define CP15_ACTLR_FW			UINT_C(0x00000001)
 #endif /* __TARGET_ARCH_ARM == 6 */
 
 /*
@@ -157,7 +158,7 @@
 /*
  *  グローバルタイマ関連の定義
  */
-#if __TARGET_ARCH_ARM == 7
+#if __TARGET_ARCH_ARM == 7 /* 正確にはr1から */
 
 /*
  *  グローバルタイマレジスタの番地の定義
@@ -200,6 +201,9 @@ mpcore_enable_smp(void)
 
 	CP15_READ_ACTLR(reg);
 	reg |= CP15_ACTLR_SMP;
+#if __TARGET_ARCH_ARM == 7
+	reg |= CP15_ACTLR_FW;
+#endif /* __TARGET_ARCH_ARM == 7 */
 	CP15_WRITE_ACTLR(reg);
 }
 

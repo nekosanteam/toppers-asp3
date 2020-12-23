@@ -1,7 +1,7 @@
 #
 #		Makefile のチップ依存部（RZ/A1用）
 #
-#  $Id: Makefile.chip 1274 2019-10-03 15:58:32Z ertl-hiro $
+#  $Id: Makefile.chip 1410 2020-05-03 22:28:13Z ertl-hiro $
 # 
 
 #
@@ -12,8 +12,12 @@ CHIPDIR = $(SRCDIR)/arch/$(CORE)_$(TOOL)/$(CHIP)
 #
 #  コンパイルオプション
 #
+#  カーネルとシステムサービスをFPU命令なしでコンパイルするために，
+#  APPL_CFLAGSとLDFLAGSにのみ-mfpu=vfpv3-d16オプションを追加する．
+#
 INCLUDES := $(INCLUDES) -I$(CHIPDIR)
-COPTS := $(COPTS) -mcpu=cortex-a9 -mfpu=vfpv3-d16
+COPTS := $(COPTS) -mcpu=cortex-a9
+APPL_CFLAGS := $(APPL_CFLAGS) -mfpu=vfpv3-d16
 LDFLAGS := $(LDFLAGS) -mcpu=cortex-a9 -mfpu=vfpv3-d16
 CDEFS := $(CDEFS) -D__TARGET_ARCH_ARM=7
 

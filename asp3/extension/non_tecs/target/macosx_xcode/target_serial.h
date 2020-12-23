@@ -3,7 +3,7 @@
  *      Toyohashi Open Platform for Embedded Real-Time Systems/
  *      Advanced Standard Profile Kernel
  * 
- *  Copyright (C) 2006-2018 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2006-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -35,7 +35,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: target_serial.h 963 2018-05-01 00:51:38Z ertl-hiro $
+ *  $Id: target_serial.h 1437 2020-05-20 12:12:16Z ertl-hiro $
  */
 
 /*
@@ -74,17 +74,17 @@ typedef struct sio_port_control_block	SIOPCB;
 /*
  *  SIOドライバの初期化
  */
-extern void		sio_initialize(intptr_t exinf);
+extern void		sio_initialize(EXINF exinf);
 
 /*
  *  SIOドライバの終了処理
  */
-extern void		sio_terminate(intptr_t exinf);
+extern void		sio_terminate(EXINF exinf);
 
 /*
  *  SIOポートのオープン
  */
-extern SIOPCB	*sio_opn_por(ID siopid, intptr_t exinf);
+extern SIOPCB	*sio_opn_por(ID siopid, EXINF exinf);
 
 /*
  *  SIOポートのクローズ
@@ -94,7 +94,7 @@ extern void		sio_cls_por(SIOPCB *p_siopcb);
 /*
  *  SIOの割込みサービスルーチン
  */
-extern void		sio_isr(intptr_t exinf);
+extern void		sio_isr(EXINF exinf);
 
 /*
  *  SIOポートへの文字送信
@@ -119,12 +119,12 @@ extern void		sio_dis_cbr(SIOPCB *siopcb, uint_t cbrtn);
 /*
  *  SIOポートからの送信可能コールバック
  */
-extern void		sio_irdy_snd(intptr_t exinf);
+extern void		sio_irdy_snd(EXINF exinf);
 
 /*
  *  SIOポートからの受信通知コールバック
  */
-extern void		sio_irdy_rcv(intptr_t exinf);
+extern void		sio_irdy_rcv(EXINF exinf);
 
 #endif /* TOPPERS_MACRO_ONLY */
 #endif /* TOPPERS_TARGET_SERIAL_H */

@@ -1,5 +1,5 @@
 PACKAGE asp3
-VERSION 3.5.0
+VERSION 3.6.0
 
 configure.rb
 MANIFEST
@@ -169,5 +169,6 @@ sample/tSample2.h
 
 INCLUDE cfg/MANIFEST
 INCLUDE test/MANIFEST
+INCLUDE test_cfg/MANIFEST
 INCLUDE extension/MANIFEST
 INCLUDE target/dummy_gcc/MANIFEST

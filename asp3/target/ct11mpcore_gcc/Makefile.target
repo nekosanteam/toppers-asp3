@@ -1,7 +1,7 @@
 #
 #		Makefileのターゲット依存部（CT11MPcore用）
 #
-#  $Id: Makefile.target 1058 2018-11-19 16:19:31Z ertl-hiro $
+#  $Id: Makefile.target 1410 2020-05-03 22:28:13Z ertl-hiro $
 # 
 
 #
@@ -31,8 +31,13 @@ DATA_START_ADDRESS=0x01800000
 #
 #  コンパイルオプション
 #
+#  カーネルとシステムサービスをFPU命令なしでコンパイルするために，
+#  KERNEL_CFLAGSとSYSSVC_CFLAGSに-mcpu=mpcorenovfpオプションを追加する．
+#
 INCLUDES := $(INCLUDES) -I$(TARGETDIR)
 COPTS := $(COPTS) -mlittle-endian -mcpu=mpcore
+KERNEL_CFLAGS := $(KERNEL_CFLAGS) -mcpu=mpcorenovfp
+SYSSVC_CFLAGS := $(SYSSVC_CFLAGS) -mcpu=mpcorenovfp
 LDFLAGS := $(LDFLAGS) -mlittle-endian -mcpu=mpcore
 CDEFS := $(CDEFS) -D__TARGET_ARCH_ARM=6
 

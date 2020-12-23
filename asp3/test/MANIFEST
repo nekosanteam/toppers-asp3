@@ -36,7 +36,6 @@ simt_systim4.c
 simt_systim4.cfg
 simt_systim4.h
 tBitKernel.c
-tBitMutex.c
 test_common.h
 test_cpuexc.cfg
 test_cpuexc.h
@@ -96,7 +95,6 @@ test_notify1.cfg
 test_notify1.h
 test_pf.cdl
 test_pf_bitkernel.cdl
-test_pf_bitmutex.cdl
 test_raster1.c
 test_raster1.cfg
 test_raster1.h

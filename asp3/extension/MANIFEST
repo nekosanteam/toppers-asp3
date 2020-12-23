@@ -136,6 +136,9 @@ subprio/test/test_subprio2.c
 subprio/test/test_subprio2.cfg
 subprio/test/test_subprio2.h
 
+subprio/test_cfg/pass2_subprio1.cfg
+subprio/test_cfg/pass2_subprio1_error.txt
+
 dcre/include/kernel.h
 
 dcre/kernel/Makefile.kernel
@@ -242,10 +245,10 @@ non_tecs/arch/arm_gcc/rza1/chip_serial.h
 non_tecs/arch/arm_gcc/rza1/scif.c
 non_tecs/arch/arm_gcc/rza1/scif.h
 
-non_tecs/target/zybo_gcc/target_kernel_impl.c
-non_tecs/target/zybo_gcc/target_serial.cfg
-non_tecs/target/zybo_gcc/target_serial.h
-non_tecs/target/zybo_gcc/target_syssvc.h
+non_tecs/target/zybo_z7_gcc/target_kernel_impl.c
+non_tecs/target/zybo_z7_gcc/target_serial.cfg
+non_tecs/target/zybo_z7_gcc/target_serial.h
+non_tecs/target/zybo_z7_gcc/target_syssvc.h
 
 non_tecs/arch/arm_gcc/zynq7000/chip_serial.c
 non_tecs/arch/arm_gcc/zynq7000/chip_serial.cfg

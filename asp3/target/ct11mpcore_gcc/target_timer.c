@@ -3,7 +3,7 @@
  *      Toyohashi Open Platform for Embedded Real-Time Systems/
  *      Advanced Standard Profile Kernel
  * 
- *  Copyright (C) 2007-2015 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2007-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -35,7 +35,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: target_timer.c 437 2015-08-09 00:36:08Z ertl-hiro $
+ *  $Id: target_timer.c 1437 2020-05-20 12:12:16Z ertl-hiro $
  */
 
 /*
@@ -57,7 +57,7 @@
  *  オーバランタイマの初期化処理
  */
 void
-target_ovrtimer_initialize(intptr_t exinf)
+target_ovrtimer_initialize(EXINF exinf)
 {
 	sil_wrw_mem(SP804_CR(OVRTIMER_TIMER_BASE), SP804_DISABLE|SP804_CONFIG);
 	sil_wrw_mem(SP804_ICR(OVRTIMER_TIMER_BASE), 0U);
@@ -67,7 +67,7 @@ target_ovrtimer_initialize(intptr_t exinf)
  *  オーバランタイマの停止処理
  */
 void
-target_ovrtimer_terminate(intptr_t exinf)
+target_ovrtimer_terminate(EXINF exinf)
 {
 	sil_wrw_mem(SP804_CR(OVRTIMER_TIMER_BASE), SP804_DISABLE);
 	sil_wrw_mem(SP804_ICR(OVRTIMER_TIMER_BASE), 0U);
