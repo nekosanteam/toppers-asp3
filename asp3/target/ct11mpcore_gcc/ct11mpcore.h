@@ -2,7 +2,7 @@
  *  TOPPERS Software
  *      Toyohashi Open Platform for Embedded Real-Time Systems
  * 
- *  Copyright (C) 2006-2017 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2006-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -34,11 +34,11 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: ct11mpcore.h 795 2017-07-03 17:08:39Z ertl-hiro $
+ *  $Id: ct11mpcore.h 1433 2020-05-20 06:54:50Z ertl-hiro $
  */
 
 /*
- *		CT11MPcore with RealView Emulation Baseboard サポートモジュール
+ *		CT11MPCore with RealView Emulation Baseboard サポートモジュール
  */
 
 #ifndef TOPPERS_CT11MPCORE_H
@@ -47,7 +47,7 @@
 /*
  *  割込みの数
  */
-#define DIC_TNUM_INTNO		UINT_C(64)
+#define DIC_TNUM_INTNO		UINT_C(48)
 
 /*
  *  割込み番号

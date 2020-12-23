@@ -34,7 +34,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: rza1.h 1075 2018-11-25 13:51:40Z ertl-hiro $
+ *  $Id: rza1.h 1418 2020-05-04 23:24:36Z ertl-hiro $
  */
 
 /*
@@ -83,11 +83,6 @@
  *  MPCore Private Memory Regionの先頭番地
  */
 #define MPCORE_PMR_BASE		0xf0000000
-
-/*
- *  CP15の補助制御レジスタ（ACTLR）の設定値
- */
-#define CP15_ACTLR_SMP		UINT_C(0x00000040)
 
 /*
  *  GIC依存部を使用するための定義

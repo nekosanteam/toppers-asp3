@@ -3,7 +3,7 @@
  *      Toyohashi Open Platform for Embedded Real-Time Systems/
  *      Advanced Standard Profile Kernel
  * 
- *  Copyright (C) 2007-2018 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2007-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -35,7 +35,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: target_timer.h 1058 2018-11-19 16:19:31Z ertl-hiro $
+ *  $Id: target_timer.h 1437 2020-05-20 12:12:16Z ertl-hiro $
  */
 
 /*
@@ -89,12 +89,12 @@
 /*
  *  オーバランタイマの初期化処理
  */
-extern void target_ovrtimer_initialize(intptr_t exinf);
+extern void target_ovrtimer_initialize(EXINF exinf);
 
 /*
  *  オーバランタイマの停止処理
  */
-extern void target_ovrtimer_terminate(intptr_t exinf);
+extern void target_ovrtimer_terminate(EXINF exinf);
 
 /*
  *  オーバランタイマの動作開始

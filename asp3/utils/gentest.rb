@@ -4,7 +4,7 @@
 #  TOPPERS Software
 #      Toyohashi Open Platform for Embedded Real-Time Systems
 # 
-#  Copyright (C) 2007-2019 by Embedded and Real-Time Systems Laboratory
+#  Copyright (C) 2007-2020 by Embedded and Real-Time Systems Laboratory
 #              Graduate School of Information Science, Nagoya Univ., JAPAN
 # 
 #  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -36,7 +36,7 @@
 #  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
 #  の責任を負わない．
 # 
-#  $Id: gentest.rb 1278 2019-10-04 05:32:58Z ertl-hiro $
+#  $Id: gentest.rb 1437 2020-05-20 12:12:16Z ertl-hiro $
 # 
 
 #
@@ -53,7 +53,7 @@ require "fileutils"
 $parameterDefinition = {
   "get_tst" => { 2 => "STAT" },
   "get_pri" => { 2 => "PRI" },
-  "get_inf" => { 1 => "intptr_t" },
+  "get_inf" => { 1 => "EXINF" },
   "ref_tsk" => { 2 => "T_RTSK" },
   "ref_sem" => { 2 => "T_RSEM" },
   "wai_flg" => { 4 => "FLGPTN" },
@@ -189,19 +189,19 @@ class PUCode
     case @puName
     when /^TASK([0-9]*)$/
       $outFile.print("\nvoid\n")
-      $outFile.print("task#{$1}(intptr_t exinf)\n")
+      $outFile.print("task#{$1}(EXINF exinf)\n")
     when /^CYC([0-9]*)$/
       $outFile.print("\nvoid\n")
-      $outFile.print("cyclic#{$1}_handler(intptr_t exinf)\n")
+      $outFile.print("cyclic#{$1}_handler(EXINF exinf)\n")
     when /^ALM([0-9]*)$/
       $outFile.print("\nvoid\n")
-      $outFile.print("alarm#{$1}_handler(intptr_t exinf)\n")
+      $outFile.print("alarm#{$1}_handler(EXINF exinf)\n")
     when /^OVR$/
       $outFile.print("\nvoid\n")
-      $outFile.print("overrun_handler(ID tskid, intptr_t exinf)\n")
+      $outFile.print("overrun_handler(ID tskid, EXINF exinf)\n")
     when /^ISR([0-9]*)$/
       $outFile.print("\nvoid\n")
-      $outFile.print("isr#{$1}(intptr_t exinf)\n")
+      $outFile.print("isr#{$1}(EXINF exinf)\n")
     when /^INTHDR([0-9]*)$/
       $outFile.print("\nvoid\n")
       $outFile.print("inthdr#{$1}_handler(void)\n")

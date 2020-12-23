@@ -3,7 +3,7 @@
  *      Toyohashi Open Platform for Embedded Real-Time Systems/
  *      Advanced Standard Profile Kernel
  * 
- *  Copyright (C) 2013-2018 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2013-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -35,7 +35,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: target_kernel_impl.c 1230 2019-07-04 06:46:50Z ertl-hiro $
+ *  $Id: target_kernel_impl.c 1482 2020-10-03 06:47:56Z ertl-hiro $
  */
 
 /*
@@ -49,29 +49,22 @@
 #endif /* TOPPERS_SUPPORT_OVRHDR */
 
 /*
- *  トレースログマクロのデフォルト定義
- */
-#ifndef LOG_DSP_ENTER
-#define LOG_DSP_ENTER(p_tcb)
-#endif /* LOG_DSP_ENTER */
-
-#ifndef LOG_DSP_LEAVE
-#define LOG_DSP_LEAVE(p_tcb)
-#endif /* LOG_DSP_LEAVE */
-
-/*
  *  ディスパッチャ本体
  */
 static void
 dispatcher(void)
 {
-	LOG_DSP_ENTER(p_runtsk);
+#ifdef LOG_DSP_ENTER
+	log_dsp_enter(p_runtsk);
+#endif /* LOG_DSP_ENTER */
 
 /* dispatcher_0: */
 	p_runtsk = p_schedtsk;
 	if (p_runtsk != NULL) {
 		/* 自タスク（p_runtsk）のTCBからスタックポインタを復帰する */
-		LOG_DSP_LEAVE(p_runtsk);
+#ifdef LOG_DSP_LEAVE
+		log_dsp_leave(p_runtsk);
+#endif /* LOG_DSP_LEAVE */
 		/* 自タスクのTCBから実行再開番地を復帰し，そこへ分岐する */
 	}
 

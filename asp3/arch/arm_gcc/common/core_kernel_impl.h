@@ -5,7 +5,7 @@
  * 
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2006-2019 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2006-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,7 +37,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: core_kernel_impl.h 1213 2019-04-07 14:29:26Z ertl-hiro $
+ *  $Id: core_kernel_impl.h 1420 2020-05-04 23:58:18Z ertl-hiro $
  */
 
 /*
@@ -392,7 +392,6 @@ exc_sense_lock(void *p_excinf)
 {
 #ifndef TOPPERS_SAFEG_SECURE
 	return(((((T_EXCINF *)(p_excinf))->cpsr) & CPSR_INT_MASK) != 0U);
-#define CPSR_UNLOCK			UINT_C(0x00)
 #else /* TOPPERS_SAFEG_SECURE */
 	return(((((T_EXCINF *)(p_excinf))->cpsr) & CPSR_FIQ_BIT) != 0U);
 #endif /* TOPPERS_SAFEG_SECURE */
@@ -504,4 +503,18 @@ extern void default_int_handler(void);
 extern void default_exc_handler(void *p_excinf, EXCNO excno);
 
 #endif /* TOPPERS_MACRO_ONLY */
+
+/*
+ *  整合性検査のための定義
+ *
+ *  保存されているスタックポインタが，4バイト境界にアラインし，スタッ
+ *  ク上を指しているかをチェックする．
+ *
+ *  VALID_TSKCTXBを，インライン関数ではなくマクロ定義としているのは，
+ *  この時点ではTCBが定義されていないためである．
+ */
+#define VALID_TSKCTXB(p_tskctxb, p_tcb)								\
+			((((uintptr_t)((p_tskctxb)->sp) & 0x03U) == 0U)			\
+				&& on_stack((p_tskctxb)->sp, 0, (p_tcb)->p_tinib))
+
 #endif /* TOPPERS_CORE_KERNEL_IMPL_H */

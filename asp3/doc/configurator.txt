@@ -2,8 +2,8 @@
 		TOPPERS/ASP3カーネル
 		コンフィギュレータ仕様
 
-		対応バージョン: Release 3.5.0
-		最終更新: 2019年2月3日
+		対応バージョン: Release 3.6.0
+		最終更新: 2020年5月20日
 
 このドキュメントは，TOPPERS/ASP3カーネルのコンフィギュレータが標準的に
 生成すべきファイルの内容について解説したものである．ターゲット依存に生
@@ -14,7 +14,7 @@
      Toyohashi Open Platform for Embedded Real-Time Systems/
      Advanced Standard Profile Kernel
 
- Copyright (C) 2005-2019 by Embedded and Real-Time Systems Laboratory
+ Copyright (C) 2005-2020 by Embedded and Real-Time Systems Laboratory
              Graduate School of Information Science, Nagoya Univ., JAPAN
  
  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -46,7 +46,7 @@
  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  の責任を負わない．
  
- $Id: configurator.txt 1269 2019-10-02 16:34:35Z ertl-hiro $
+ $Id: configurator.txt 1437 2020-05-20 12:12:16Z ertl-hiro $
 ----------------------------------------------------------------------
 
 ○目次
@@ -97,8 +97,8 @@
 	4.9 非タスクコンテキスト用のスタック領域に関する定義
 	4.10 タイムイベント管理に関する定義
 	4.11 各モジュールの初期化関数の定義
-	4.12 初期化ルーチンの実行関数の定義
-	4.13 終了処理ルーチンの実行関数の定義
+	4.12 初期化ルーチンに関する定義
+	4.13 終了処理ルーチンに関する定義
 
 
 １．生成するファイルの種類
@@ -114,7 +114,7 @@ ASP3カーネルのコンフィギュレータは，システムコンフィギ�
 ASP3カーネルのコンフィギュレータが処理する静的APIは次の通り．
 
 (1) タスク管理機能
-	CRE_TSK(ID tskid, { ATR tskatr, intptr_t exinf, TASK task,
+	CRE_TSK(ID tskid, { ATR tskatr, EXINF exinf, TASK task,
 								PRI itskpri, size_t stksz, STK_T *stk })
 
 (2) 同期・通信機能
@@ -139,7 +139,7 @@ ASP3カーネルのコンフィギュレータが処理する静的APIは次の�
 
 (5) 割込み管理機能
 	CFG_INT(INTNO intno, { ATR intatr, PRI intpri })
-	CRE_ISR(ID isrid, { ATR isratr, intptr_t exinf,
+	CRE_ISR(ID isrid, { ATR isratr, EXINF exinf,
 								INTNO intno, ISR isr, PRI isrpri })
 	DEF_INH(INHNO inhno, { ATR inhatr, INTHDR inthdr })
 
@@ -148,8 +148,8 @@ ASP3カーネルのコンフィギュレータが処理する静的APIは次の�
 
 (7) システム構成管理機能
 	DEF_ICS({ size_t istksz, STK_T *istk })
-	ATT_INI({ ATR iniatr, intptr_t exinf, INIRTN inirtn })
-	ATT_TER({ ATR teratr, intptr_t exinf, TERRTN terrtn })
+	ATT_INI({ ATR iniatr, EXINF exinf, INIRTN inirtn })
+	ATT_TER({ ATR teratr, EXINF exinf, TERRTN terrtn })
 
 
 ３．カーネル構成・初期化ヘッダファイル（kernel_cfg.h）
@@ -349,11 +349,11 @@ static STK_T _kernel_stack_<タスク名>[COUNT_STK_T(stksz)];
 タスク初期化ブロック中に生成するタスクの初期化情報は，次の形式とする．
 
 ＊stkがNULLでない場合
-	{ (tskatr), (intptr_t)(exinf), (TASK)(task), INT_PRIORITY(itskpri),
+	{ (tskatr), (EXINF)(exinf), (TASK)(task), INT_PRIORITY(itskpri),
 											(stksz), (void *)(stk) }
 
 ＊stkがNULLの場合
-	{ (tskatr), (intptr_t)(exinf), (TASK)(task), INT_PRIORITY(itskpri),
+	{ (tskatr), (EXINF)(exinf), (TASK)(task), INT_PRIORITY(itskpri),
 							ROUND_STK_T(stksz), _kernel_stack_<タスク名> }
 
 4.5.2.3 タスク生成順序テーブルの定義
@@ -403,14 +403,13 @@ const ID _kernel_torder_table[TNUM_TSKID] = {
 	- ターゲット依存の値（CHECK_STACK_ALIGN）の倍数でない場合
 	- NULLの場合（CHECK_STACK_NONNULLが定義されている場合）
 
-(*1)は，仕様書では，「stkszに0を指定した時や，設定されるスタック領域の
-サイズがターゲット定義の最小値よりも小さくなる時」と規定されている．設
-定されるスタック領域のサイズは，stkszを，ターゲット定義の制約に合致す
-るように大きい方に丸めたものである．そこで，TARGET_MIN_STKSZを，丸める
-前の値で許容される最小値に定義しておけば，stkszがTARGET_MIN_STKSZより
-小さい場合をエラーとして良い．なお，TARGET_MIN_STKSZが定義されない場合
-は，TARGET_MIN_STKSZに1が設定され，このエラーチェックでは，stkszが0の
-場合のみをエラーとすることになる．
+(*1)は，仕様書では，「設定されるスタック領域のサイズがターゲット定義の
+最小値よりも小さくなる時」と規定されている．設定されるスタック領域のサ
+イズは，stkszを，ターゲット定義の制約に合致するように大きい方に丸めた
+ものである．そこで，TARGET_MIN_STKSZを，丸める前の値で許容される最小値
+に定義しておけば，stkszがTARGET_MIN_STKSZより小さい場合をエラーとして
+良い．なお，TARGET_MIN_STKSZが定義されない場合のデフォルト値は1であり，
+このエラーチェックでは，stkszが0の場合のみをエラーとすることになる．
 
 4.5.3 セマフォに関する定義
 
@@ -673,7 +672,7 @@ static MPFMB _kernel_mpfmb_<固定長メモリプール名>[blkcnt];
 周期通知初期化ブロック中に生成する周期通知の初期化情報は，次の形式とす
 る．
 
-	{ (cycatr), (intptr_t)(exinf), nfyhdr, (cyctim), (cycphs) }
+	{ (cycatr), (EXINF)(exinf), nfyhdr, (cyctim), (cycphs) }
 
 4.5.9.3 エラー条件
 
@@ -728,7 +727,7 @@ static MPFMB _kernel_mpfmb_<固定長メモリプール名>[blkcnt];
 アラーム通知初期化ブロック中に生成するアラーム通知の初期化情報は，次の
 形式とする．
 
-	{ (almatr), （intptr_t)(exinf), nfyhdr }
+	{ (almatr), （EXINF)(exinf), nfyhdr }
 
 4.5.10.3 エラー条件
 
@@ -767,7 +766,7 @@ ASP3カーネルでは，コンフィギュレータにより，周期通知毎�
 (a) エラーの通知を行わない場合
 
 static void
-_kernel_nfyhdr_<cycid または almid>(intptr_t exinf)
+_kernel_nfyhdr_<cycid または almid>(EXINF exinf)
 {
 	(void) ＜イベントの通知処理＞;
 }
@@ -775,7 +774,7 @@ _kernel_nfyhdr_<cycid または almid>(intptr_t exinf)
 (b) エラーの通知を行う場合
 
 static void
-_kernel_nfyhdr_<cycid または almid>(intptr_t exinf)
+_kernel_nfyhdr_<cycid または almid>(EXINF exinf)
 {
 	ER		ercd;
 
@@ -1097,7 +1096,7 @@ static void
 _kernel_inthdr_<intno>(void)
 {
 	LOG_ISR_ENTER(ISR_1);		/* ISR_1の呼出し */
-	((ISR)(isr_1))((intptr_t)(exinf_1));
+	((ISR)(isr_1))((EXINF)(exinf_1));
 	LOG_ISR_LEAVE(ISR_1);
 
 	if (sense_lock()) {			/* ISRの呼出し前の状態に戻す */
@@ -1105,7 +1104,7 @@ _kernel_inthdr_<intno>(void)
 	}
 
 	LOG_ISR_ENTER(ISR_2);		/* ISR_2の呼出し */
-	((ISR)(isr_2))((intptr_t)(exinf_2));
+	((ISR)(isr_2))((EXINF)(exinf_2));
 	LOG_ISR_LEAVE(ISR_2);
 
 	if (sense_lock()) {			/* ISRの呼出し前の状態に戻す */
@@ -1115,7 +1114,7 @@ _kernel_inthdr_<intno>(void)
 	……
 
 	LOG_ISR_ENTER(ISR_N);		/* ISR_Nの呼出し */
-	((ISR)(isr_n))((intptr_t)(exinf_n));
+	((ISR)(isr_n))((EXINF)(exinf_n));
 	LOG_ISR_LEAVE(ISR_N);
 }
 
@@ -1129,7 +1128,7 @@ static void
 _kernel_inthdr_<intno>(void)
 {
 	LOG_ISR_ENTER(ISR_1);
-	((ISR)(isr_1))((intptr_t)(exinf_1));
+	((ISR)(isr_1))((EXINF)(exinf_1));
 	LOG_ISR_LEAVE(ISR_1);
 }
 
@@ -1159,9 +1158,8 @@ _kernel_inthdr_<intno>(void)
 　（TMIN_ISRPRI <= isrpri && isrpri <= TMAX_ISRPRIでない場合）
 ・intnoに対するCFG_INTがない場合（E_OBJ）［NGKI3012］
 ・intnoに対応するinhnoに対してDEF_INHがある場合（E_OBJ）［NGKI3013］
-・intnoでカーネル管理外の割込みを指定した場合（E_OBJ）［NGKI3014］
-　（intnoに対してCFG_INTで設定された割込み優先度がTMIN_INTPRIよりも小
-	さい場合）
+・intnoでカーネル管理外の割込み（intnoに対してCFG_INTで設定された割込
+　み優先度がTMIN_INTPRIよりも小さい場合）を指定した場合（E_OBJ）［NGKI3014］　
 
 ＊必要であればターゲット依存部（TargetCheckCreIsr）で検出するもの
 ・isratrが無効の場合（E_RSATR）［NGKI2998］［NGKI5176］
@@ -1240,13 +1238,13 @@ const INHINIB _kernel_inhinib_table[TNUM_DEF_INHNO] = {
 　されている場合（E_RSATR）［NGKI3068］
 ・inhnoに対応するintnoに対するCFG_INTがない場合（E_OBJ）［NGKI3062］
 	※ inhnoに対応するintnoがない場合には，このチェックを行わない
-・カーネル管理外の割込み（inhnoに対応するintnoに対してCFG_INTで設定さ
-　れた割込み優先度がTMIN_INTPRIよりも小さい場合）に対して，inhatrに
-　TA_NONKERNELが指定されていない場合（E_OBJ）［NGKI3065］
+・inhnoに対応するintnoに対してCFG_INTで設定された割込み優先度が
+　TMIN_INTPRIよりも小さく，inhatrにTA_NONKERNELが指定されていない場合
+　（E_OBJ）［NGKI3065］
 	※ inhnoに対応するintnoがない場合には，このチェックを行わない
-・カーネル管理の割込み（inhnoに対応するintnoに対してCFG_INTで設定され
-　た割込み優先度がTMIN_INTPRI以上である場合）に対して，inhatrに
-　TA_NONKERNELが指定されている場合（E_OBJ）［NGKI3066］
+・inhnoに対応するintnoに対してCFG_INTで設定された割込み優先度が
+　TMIN_INTPRI以上で，inhatrにTA_NONKERNELが指定されている場合（E_OBJ）
+　［NGKI3066］
 	※ inhnoに対応するintnoがない場合には，このチェックを行わない
 
 ＊必要であればターゲット依存部（TargetCheckDefInh）で検出するもの
@@ -1467,7 +1465,7 @@ STK_T *const	_kernel_istkpt = TOPPERS_ISTKPT(TOPPERS_ISTK, TOPPERS_ISTKSZ);
 非タスクコンテキスト用のスタック領域に関するエラー条件は次の通りである．
 
 ＊パス2で検出するもの
-・静的API「DEF_ICS」が複数ある（E_OBJ）［NGKI3216］
+・非タスクコンテキスト用スタック領域が設定済み（E_OBJ）［NGKI3216］
 ・istkszがターゲット定義の最小値（TARGET_MIN_ISTKSZ，未定義の場合は1）
 　よりも小さい場合（E_PAR）［NGKI3254］… (*1)と同様
 ・istkszがターゲット定義の制約に合致しない場合（E_PAR）［NGKI3222］
@@ -1548,7 +1546,7 @@ const INIRTNB _kernel_inirtnb_table[TNUM_INIRTN] = {
 
 という静的APIに対応して，次の形式とする（iniatrは使用されない）．
 
-	{ (INIRTN)(inirtn), (intptr_t)(exinf) }
+	{ (INIRTN)(inirtn), (EXINF)(exinf) }
 
 初期化ルーチンが1つも登録されなかった場合には，次のような行を生成する．
 
@@ -1602,7 +1600,7 @@ const TERRTNB _kernel_terrtnb_table[TNUM_TERRTN] = {
 
 という静的APIに対応して，次の形式とする（teratrは使用されない）．
 
-	{ (TERRTN)(terrtn), (intptr_t)(exinf) }
+	{ (TERRTN)(terrtn), (EXINF)(exinf) }
 
 終了処理ルーチンが1つも登録されなかった場合には，次のような行を生成す
 る．

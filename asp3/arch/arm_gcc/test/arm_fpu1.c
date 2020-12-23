@@ -2,7 +2,7 @@
  *  TOPPERS Software
  *      Toyohashi Open Platform for Embedded Real-Time Systems
  * 
- *  Copyright (C) 2019 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2019-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -34,7 +34,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: arm_fpu1.c 1275 2019-10-03 16:01:48Z ertl-hiro $
+ *  $Id: arm_fpu1.c 1437 2020-05-20 12:12:16Z ertl-hiro $
  */
 
 /* 
@@ -136,7 +136,7 @@ cpuexc1_handler(void *p_excinf)
 }
 
 void
-task1(intptr_t exinf)
+task1(EXINF exinf)
 {
 	double64_t	d1;
 	ER_UINT	ercd;
@@ -168,7 +168,7 @@ task1(intptr_t exinf)
 }
 
 void
-task2(intptr_t exinf)
+task2(EXINF exinf)
 {
 	double64_t	d2;
 	ER_UINT	ercd;
@@ -188,7 +188,7 @@ task2(intptr_t exinf)
 }
 
 void
-task3(intptr_t exinf)
+task3(EXINF exinf)
 {
 	double64_t	d3;
 
@@ -201,7 +201,7 @@ task3(intptr_t exinf)
 }
 
 void
-task4(intptr_t exinf)
+task4(EXINF exinf)
 {
 
 	check_finish(8);

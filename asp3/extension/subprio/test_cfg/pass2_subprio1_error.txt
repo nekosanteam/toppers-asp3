@@ -1,0 +1,4 @@
+../../test_cfg/pass2_subprio1.cfg:16: warning: tskpri `11' in ENA_SPR is same with LOW_PRIORITY
+../../test_cfg/pass2_subprio1.cfg:17: error: E_ILUSE: illegal ceilpri `MID_PRIORITY' in CRE_MTX of MTX1
+../../test_cfg/pass2_subprio1.cfg:18: warning: ceilpri `LOW_PRIORITY' is ignored in CRE_MTX of MTX2
+make: *** [kernel_cfg.timestamp] Error 1

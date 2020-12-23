@@ -36,7 +36,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: start.S 540 2016-01-16 02:15:41Z ertl-hiro $
+ *  $Id: start.S 1443 2020-06-05 13:14:17Z ertl-hiro $
  */
 
 /*
@@ -108,8 +108,8 @@ ALABEL(start_3)
 	/*
 	 *  dataセクションの初期化（ROM化対応）
 	 *
-	 *  DATA_STARTからDATA_ENDまでに，IDATA_START以降からコピーする．
-	 *  IDATA_STARTからIDATA_ENDまでを，DATA_START以降にコピーする．
+	 *  DATA_STARTからDATA_ENDまでに，IDATA_START以降のデータをコピーす
+	 *  る．
 	 */
 	ldr		r0, =DATA_START
 	ldr		r2, =DATA_END

@@ -2,7 +2,7 @@
  *  TOPPERS Software
  *      Toyohashi Open Platform for Embedded Real-Time Systems
  * 
- *  Copyright (C) 2014-2016 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2014-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -34,7 +34,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: test_messagebuf2.c 949 2018-04-19 13:29:51Z ertl-hiro $
+ *  $Id: test_messagebuf2.c 1437 2020-05-20 12:12:16Z ertl-hiro $
  */
 
 /* 
@@ -263,7 +263,7 @@ extern ER	bit_kernel(void);
 static uint_t	alarm1_count = 0;
 
 void
-alarm1_handler(intptr_t exinf)
+alarm1_handler(EXINF exinf)
 {
 	ER_UINT	ercd;
 
@@ -305,7 +305,7 @@ alarm1_handler(intptr_t exinf)
 }
 
 void
-task1(intptr_t exinf)
+task1(EXINF exinf)
 {
 	ER_UINT	ercd;
 
@@ -467,7 +467,7 @@ task1(intptr_t exinf)
 static uint_t	task2_count = 0;
 
 void
-task2(intptr_t exinf)
+task2(EXINF exinf)
 {
 	ER_UINT	ercd;
 
@@ -570,7 +570,7 @@ task2(intptr_t exinf)
 }
 
 void
-task3(intptr_t exinf)
+task3(EXINF exinf)
 {
 	ER_UINT	ercd;
 

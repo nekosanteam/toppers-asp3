@@ -36,7 +36,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: arm_insn.h 1142 2019-01-09 06:44:23Z ertl-hiro $
+ *  $Id: arm_insn.h 1388 2020-04-01 13:52:54Z ertl-hiro $
  */
 
 /*
@@ -329,7 +329,7 @@ enable_fiq_irq(void)
 #define CP15_READ_PMCNTENSET(reg)  Asm("mrc p15, 0, %0, c9, c12, 1":"=r"(reg))
 #define CP15_WRITE_PMCNTENSET(reg) Asm("mcr p15, 0, %0, c9, c12, 1"::"r"(reg))
 
-/* パフォーマンスモニタカウンタサイクルレジスタ */
+/* パフォーマンスモニタサイクルカウントレジスタ */
 #define CP15_READ_PMCCNTR(reg)	Asm("mrc p15, 0, %0, c9, c13, 0":"=r"(reg))
 #define CP15_WRITE_PMCCNTR(reg)	Asm("mcr p15, 0, %0, c9, c13, 0"::"r"(reg))
 

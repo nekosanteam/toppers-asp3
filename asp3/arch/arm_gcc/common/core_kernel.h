@@ -5,7 +5,7 @@
  * 
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2019 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,7 +37,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: core_kernel.h 1246 2019-07-17 03:42:38Z ertl-hiro $
+ *  $Id: core_kernel.h 1469 2020-08-07 23:24:42Z ertl-hiro $
  */
 
 /*
@@ -88,7 +88,7 @@
 
 typedef struct t_excinf {
 	uint32_t	nest_count;				/* 例外ネストカウント */
-	uint32_t	intpri;					/* 割込み優先度マスク */
+	int32_t		intpri;					/* 割込み優先度マスク */
 	uint32_t	cpsr;					/* CPU例外発生時のCPSR */
 	uint32_t	r0;
 	uint32_t	r1;
@@ -105,7 +105,7 @@ typedef struct t_excinf {
 
 typedef struct t_excinf {
 	uint32_t	nest_count;				/* 例外ネストカウント */
-	uint32_t	intpri;					/* 割込み優先度マスク */
+	int32_t		intpri;					/* 割込み優先度マスク */
 	uint32_t	r0;
 	uint32_t	r1;
 	uint32_t	r2;

@@ -5,7 +5,7 @@
  * 
  *  Copyright (C) 2000-2004 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2006-2019 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2006-2020 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,7 +37,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: core_support.S 1242 2019-07-16 09:02:47Z ertl-hiro $
+ *  $Id: core_support.S 1472 2020-08-11 07:08:26Z ertl-hiro $
  */
 
 /*
@@ -182,8 +182,7 @@ ALABEL(start_dispatch)
 	/*
 	 *  IDが1のタスクのスタック領域に切り換える．
 	 */
-	ldr		r0, =tcb_table			/* tcb_table[0] → r0 */
-	ldr		r2, [r0,#TCB_p_tinib]	/* tcb_table[0].p_tinib → r2 */
+	ldr		r2, =tinib_table		/* tinib_table[0] → r2 */
 	ldr		r0, [r2,#TINIB_stk]
 	ldr		r1, [r2,#TINIB_stksz]
 	add		sp, r0, r1
@@ -262,12 +261,11 @@ ALABEL(dispatcher_1)
 /*
  *  カーネルの終了処理の呼出し
  *
- *  割込みロック状態にし，使用するスタックを非タスクコンテキスト用のスタッ
- *  ク領域に切り替え，exit_kernelを呼び出す．
+ *  使用するスタックを非タスクコンテキスト用のスタック領域に切り替え，
+ *  例外ネストカウントを1にして，exit_kernelを呼び出す．
  */
 	AGLOBAL(call_exit_kernel)
 ALABEL(call_exit_kernel)
-	msr		cpsr_c, #(CPSR_SVC_MODE AOR CPSR_INTLOCK)
 	ldr		r0, =istkpt				/* 非タスクコンテキスト用のスタックに */
 	ldr		sp, [r0]
 	ldr		r0, =excpt_nest_count	/* 例外ネストカウントを1に */
@@ -946,7 +944,7 @@ ALABEL(exc_handler_1)
 	 *  カーネル管理外のCPU例外は，カーネル実行中，全割込みロック状態，
 	 *  CPUロック状態，カーネル管理外の割込みハンドラ実行中に発生した
 	 *  CPU例外である．ARMコアの場合は，戻り先のCPSRのIビットかFビット
-	 *  のいずれかがセットされているなら，これ該当する．
+	 *  のいずれかがセットされているなら，これに該当する．
 	 */
 	ldr		r1, [r5,#T_EXCINF_cpsr]		/* 例外フレームからcpsrを取得 */
 	ands	r1, r1, #CPSR_FIQ_IRQ_BIT
@@ -1307,11 +1305,11 @@ ALABEL(_kernel_set_cpsr)
 /*
  *  微少時間待ち
  *
- *  キャッシュラインのどの場所にあるかのよって実行時間が変わるため，大
- *  きめの単位でアラインしている．
+ *  ダブルワード（64ビット）のどちらに命令があるかのよって実行時間が変
+ *  わる可能性があると考え，64ビット境界にアラインしている．
  */
 	ATEXT
-	AALIGN(8)
+	AALIGN(3)
 	AGLOBAL(sil_dly_nse)
 ALABEL(sil_dly_nse)
 	mov		r1, #0
