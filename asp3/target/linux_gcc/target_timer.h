@@ -66,12 +66,12 @@
 /*
  *  タイマの初期化処理
  */
-extern void	target_timer_initialize(intptr_t exinf);
+extern void	target_timer_initialize(EXINF exinf);
 
 /*
  *  タイマの終了処理
  */
-extern void	target_timer_terminate(intptr_t exinf);
+extern void	target_timer_terminate(EXINF exinf);
 
 /*
  *  高分解能タイマの現在のカウント値の読出し

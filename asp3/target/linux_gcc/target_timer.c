@@ -178,7 +178,7 @@ start_itimer(void)
  *  タイマの初期化処理
  */
 void
-target_timer_initialize(intptr_t exinf)
+target_timer_initialize(EXINF exinf)
 {
 	hrtcnt_current = 0U;
 	hrtcnt_left = 0U;
@@ -194,7 +194,7 @@ target_timer_initialize(intptr_t exinf)
  *  タイマの終了処理
  */
 void
-target_timer_terminate(intptr_t exinf)
+target_timer_terminate(EXINF exinf)
 {
 	/*
 	 *  インターバルタイマの動作を停止する．

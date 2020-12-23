@@ -1,7 +1,7 @@
-TOPPERS/ASP3: 3.5.0 (https://www.toppers.jp/asp3-d-download.html)
-linux_gcc: (https://github.com/morioka/toppers-asp3-for-linux) + 3.5.0 update + aarch64/arm support (partial).
+TOPPERS/ASP3: 3.6.0 (https://www.toppers.jp/asp3-d-download.html)
+linux_gcc: (https://github.com/morioka/toppers-asp3-for-linux) + 3.6.0 update + aarch64/arm support (partial).
 
-i386 向けにビルドするには -m32 オプションを指定します。(元ソースの指定を削除しました)
+i386 向けにビルドするには -m32 オプションを指定します。(linux_gcc 元ソースの指定を削除しました)
 指定しない場合は x86_64 向けになりますが、まだタスク切り替えができません。
   mkdir build; cd build
   ../configure.rb -T linux_gcc -o -m32
