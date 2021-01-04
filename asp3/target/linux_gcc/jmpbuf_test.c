@@ -6,21 +6,20 @@ typedef long				intptr_t;	/* ポインタを格納できる符号付き整数 */
 typedef unsigned long       uintptr_t;
 
 jmp_buf point1;
+jmp_buf point2;
 
-int func1()
+void func1()
 {
-    int x;
     setjmp(point1);
-
-    return 0;
+	printf("enter func1()\n");
+	printf("leave func1()\n");
 }
 
-int func2()
+void func2()
 {
-    int x;
-    setjmp(point1);
-
-    return 0;
+	printf("enter func2()\n");
+	printf("leave func2()\n");
+	longjmp(point2, 1);
 }
 
 #if defined(__aarch64__) || defined(__arm__)
@@ -88,7 +87,7 @@ int main(void)
     printf("pointer size = %d\n", sizeof(int*));
     printf("intptr_t size = %d\n", sizeof(intptr_t));
 
-    func();
+    func1();
     for (i=0; i<s; i++) {
         x = *(((unsigned char*)&point1) + i);
         printf("%02x ", x);
@@ -97,7 +96,8 @@ int main(void)
         }
     }
     printf("\n");
-    printf("func addr   = %p\n", func);
+    printf("func1 addr  = %p\n", func1);
+    printf("func2 addr  = %p\n", func2);
     printf("sp addr     = %p\n", &x);
     printf("jmpbuf addr = %p\n", &point1);
     pc = *(intptr_t*)(&point1[0].__jmpbuf[JMPBUF_PC]);
@@ -108,6 +108,16 @@ int main(void)
     PTR_DEMANGLE(sp);
     printf("real_pc   = %016lx\n", pc);
     printf("real_sp   = %016lx\n", sp);
+
+	if (setjmp(point2) == 0) {
+		pc = (intptr_t)func2;
+		PTR_MANGLE(pc);
+		*(intptr_t*)(&point1[0].__jmpbuf[JMPBUF_PC]) = pc;
+		longjmp(point1, 1);
+	}
+	else {
+		printf("return line\n");
+	}
 
     return 0;
 }
