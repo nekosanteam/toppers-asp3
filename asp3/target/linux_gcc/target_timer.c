@@ -155,9 +155,11 @@ start_itimer(void)
 	struct itimerval	val;
 
 	/*
-	 *  インターバルタイマに設定する時間を求める．
+	 * インターバルタイマに設定する時間を求める．
+	 * itimer_value が ulong_t なので、USE_64BIT_HRTCNT が有効な場合は
+	 * とりあえず考慮しない。
 	 */
-	itimer_value = (hrtcnt_left > 0U) ? hrtcnt_left : ULONG_MAX;
+	itimer_value = (hrtcnt_left > 0U) ? hrtcnt_left : HRTCNT_BOUND;
 #ifdef TOPPERS_SUPPORT_OVRHDR
 	if (ovrtimer_left > 0U && ovrtimer_left < itimer_value) {
 		itimer_value = ovrtimer_left;
