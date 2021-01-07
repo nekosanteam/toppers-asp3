@@ -55,6 +55,43 @@
 	AALIGN(2)
 	AGLOBAL(start)
 ALABEL(start)
+#if defined(TOPPERS_USE_BCM2836) || defined(TOPPERS_USE_BCM2837)
+	/*
+	 *  セキュア解除
+	 *  config.txt に disable_commandline_tags=1 を記載すること．
+	 */
+	mrc p15, 0, r0, c1, c1, 0
+	orr r0, r0, #0x1
+	mcr p15, 0, r0, c1, c1, 0
+
+#if defined(TOPPERS_USE_BCM2837)
+	/*
+	 *  キャッシュ無効化
+	 *  ブートローダが有効にしているので無効化．
+	 */
+	mov r12,#0
+	mcr p15, 0, r12, c7, c10, 1
+	dsb
+	mov r12, #0
+	mcr p15, 0, r12, c7, c5, 0
+	mov r12, #0
+	mcr p15, 0, r12, c7, c5, 6
+	dsb
+	isb
+#endif
+
+	/* コア0のみ動作 */
+	mrc  p15, 0, r0, c0, c0, 5
+	mov  r1, #0xF
+	ands r0, r0, r1
+	beq  start_core0
+ALABEL(start_coren)
+	wfi
+	b    start_coren
+
+ALABEL(start_core0)
+#endif
+
 	/*
 	 *  プロセッサモードの初期化
 	 *
@@ -135,6 +172,8 @@ ALABEL(start_5)
 	 *  ソフトウェア環境（特にライブラリ）に依存して必要な初期化処理が
 	 *  ある場合は，software_init_hookという関数を用意すればよい．
 	 */
+	AGLOBAL(start_master)
+ALABEL(start_master)
 	ldr		r0, =software_init_hook
 	cmp		r0, #0
 	movne	lr, pc
@@ -144,3 +183,16 @@ ALABEL(start_5)
 	 *  カーネルの起動
 	 */
 	b		sta_ker
+
+	/*
+	 *  Newlib specs．
+	 */
+	AGLOBAL(main)
+ALABEL(main)
+	bl		start_master
+	mov		r0, #1
+	bx		lr
+
+	AGLOBAL(_exit)
+ALABEL(_exit)
+	b		_exit

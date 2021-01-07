@@ -323,7 +323,7 @@ main_task(EXINF exinf)
 #endif /* TASK_LOOP */
 	HRTCNT	hrtcnt1, hrtcnt2;
 
-	SVC_PERROR(syslog_msk_log(LOG_UPTO(LOG_INFO), LOG_UPTO(LOG_EMERG)));
+	//SVC_PERROR(syslog_msk_log(LOG_UPTO(LOG_INFO), LOG_UPTO(LOG_EMERG)));
 	syslog(LOG_NOTICE, "Sample program starts (exinf = %d).", (int_t) exinf);
 
 	/*

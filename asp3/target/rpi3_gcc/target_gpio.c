@@ -1,11 +1,8 @@
 /*
- *  TOPPERS/ASP Kernel
- *      Toyohashi Open Platform for Embedded Real-Time Systems/
- *      Advanced Standard Profile Kernel
+ *  TOPPERS Software
+ *      Toyohashi Open Platform for Embedded Real-Time Systems
  * 
- *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
- *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2006-2016 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,39 +34,49 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tBannerMain.c 1437 2020-05-20 12:12:16Z ertl-hiro $
+ *  @(#) $Id: target_gpio.c 1838 2016-09-24 00:00:00Z azo $
  */
+
+#include <sil.h>
+#include "bcm283x.h"
+#include "target_gpio.h"
 
 /*
- *		カーネル起動メッセージ出力の本体
+ *  GPIO設定．
  */
+void target_gpio_initialize(void) {
+	volatile uint32_t r,a;
 
-#include "tBannerMain_tecsgen.h"
-#include <t_syslog.h>
+#if BCM283X_USE_UART == 1
+	/* AUX mini UART : GPIO14 ALT5 PullUD disable / GPIO15 ALT5 PullUD disable */
 
-/*
- *  カーネル起動メッセージ
- */
-static const char banner[] = "\n"
-"TOPPERS/ASP3 Kernel Release %d.%X.%d for %s"
-" (" __DATE__ ", " __TIME__ ")\n"
-"Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory\n"
-"                            Toyohashi Univ. of Technology, JAPAN\n"
-"Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory\n"
-"            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-"%s";
+	r = sil_rew_mem(BCM283X_GPIO_GPFSEL1);
+	r &= ~(7<<12);	/* GPIO14 ALT5 */
+	r |= 2<<12;
+	r &= ~(7<<15);	/* GPIO15 ALT5 */
+	r |= 2<<15;
+	sil_wrw_mem(BCM283X_GPIO_GPFSEL1, r);
 
-/*
- *  カーネル起動メッセージの出力（受け口関数）
- */
-void
-eBannerInitialize_main(EXINF exinf)
-{
-	syslog_msk_log(LOG_UPTO(LOG_DEBUG), LOG_UPTO(LOG_DEBUG));
-	syslog_5(LOG_NOTICE, banner,
-				(TKERNEL_PRVER >> 12) & 0x0fU,
-				(TKERNEL_PRVER >> 4) & 0xffU,
-				TKERNEL_PRVER & 0x0fU,
-				ATTR_targetName,
-				ATTR_copyrightNotice);
+	sil_wrw_mem(BCM283X_GPIO_GPPUD, 0);
+	for(r = 0; r < 150; r++) a = sil_rew_mem(BCM283X_GPIO_GPFSEL1);	/* dummy */
+	sil_wrw_mem(BCM283X_GPIO_GPPUDCLK0, (1<<14)|(1<<15));	/* GPIO14 PullUD disable / GPIO15 PullUD disable */
+	for(r = 0; r < 150; r++) a = sil_rew_mem(BCM283X_GPIO_GPFSEL1);	/* dummy */
+	sil_wrw_mem(BCM283X_GPIO_GPPUDCLK0, 0);
+#else	/* BCM283X_USE_UART */
+	/* PL011 UART : GPIO14 ALT0 PullUD disable / GPIO15 ALT0 PullUD disable */
+
+	r = sil_rew_mem(BCM283X_GPIO_GPFSEL1);
+	r &= ~(7<<12);	/* GPIO14 ALT0 */
+	r |= 4<<12;
+	r &= ~(7<<15);	/* GPIO15 ALT0 */
+	r |= 4<<15;
+	sil_wrw_mem(BCM283X_GPIO_GPFSEL1, r);
+
+	sil_wrw_mem(BCM283X_GPIO_GPPUD, 0);
+	for(r = 0; r < 150; r++) a = sil_rew_mem(BCM283X_GPIO_GPFSEL1);	/* dummy */
+	sil_wrw_mem(BCM283X_GPIO_GPPUDCLK0, (1<<14)|(1<<15));	/* GPIO14 PullUD disable / GPIO15 PullUD disable */
+	for(r = 0; r < 150; r++) a = sil_rew_mem(BCM283X_GPIO_GPFSEL1);	/* dummy */
+	sil_wrw_mem(BCM283X_GPIO_GPPUDCLK0, 0);
+#endif	/* BCM283X_USE_UART */
 }
+

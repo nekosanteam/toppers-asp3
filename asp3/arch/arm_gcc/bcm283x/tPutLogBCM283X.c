@@ -3,9 +3,7 @@
  *      Toyohashi Open Platform for Embedded Real-Time Systems/
  *      Advanced Standard Profile Kernel
  * 
- *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
- *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2015,2016 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,39 +35,37 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tBannerMain.c 1437 2020-05-20 12:12:16Z ertl-hiro $
+ *  $Id: tPutLogBCM283X.c 509 2016-09-23 00:00:00Z azo $
  */
 
 /*
- *		カーネル起動メッセージ出力の本体
+ *		システムログの低レベル出力
  */
 
-#include "tBannerMain_tecsgen.h"
-#include <t_syslog.h>
+#include "tPutLogBCM283X_tecsgen.h"
 
 /*
- *  カーネル起動メッセージ
- */
-static const char banner[] = "\n"
-"TOPPERS/ASP3 Kernel Release %d.%X.%d for %s"
-" (" __DATE__ ", " __TIME__ ")\n"
-"Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory\n"
-"                            Toyohashi Univ. of Technology, JAPAN\n"
-"Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory\n"
-"            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-"%s";
-
-/*
- *  カーネル起動メッセージの出力（受け口関数）
+ *  システムログの低レベル出力のための初期化
+ *
+ *  初期化ルーチンを呼び出すより前に初期化するために，カーネルのターゲッ
+ *  ト依存部から直接呼び出すための関数．
  */
 void
-eBannerInitialize_main(EXINF exinf)
+tPutLogBCM283X_initialize(void)
 {
-	syslog_msk_log(LOG_UPTO(LOG_DEBUG), LOG_UPTO(LOG_DEBUG));
-	syslog_5(LOG_NOTICE, banner,
-				(TKERNEL_PRVER >> 12) & 0x0fU,
-				(TKERNEL_PRVER >> 4) & 0xffU,
-				TKERNEL_PRVER & 0x0fU,
-				ATTR_targetName,
-				ATTR_copyrightNotice);
+	cSIOPort_open();
+}
+
+/*
+ *  システムログの低レベル出力のための文字出力（受け口関数）
+ *
+ *  SIOポートに文字が送信できるまでポーリングする．
+ */
+void
+ePutLog_putChar(char c)
+{
+	if(c == '\n'){
+		while(!cSIOPort_putChar('\r'));
+	}
+	while(!cSIOPort_putChar(c));
 }

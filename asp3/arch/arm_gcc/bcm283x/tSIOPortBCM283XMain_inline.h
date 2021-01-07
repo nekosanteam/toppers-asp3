@@ -5,7 +5,7 @@
  * 
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2005-2015 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,39 +37,117 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tBannerMain.c 1437 2020-05-20 12:12:16Z ertl-hiro $
+ *  $Id: tSIOPortBCM238X_inline.h 526 2016-09-23 00:00:00Z azo $
  */
 
 /*
- *		カーネル起動メッセージ出力の本体
+ *		シリアルインタフェースドライバのターゲット依存部（BCM283X用）
  */
-
-#include "tBannerMain_tecsgen.h"
-#include <t_syslog.h>
 
 /*
- *  カーネル起動メッセージ
+ *  SIOポートのオープン
  */
-static const char banner[] = "\n"
-"TOPPERS/ASP3 Kernel Release %d.%X.%d for %s"
-" (" __DATE__ ", " __TIME__ ")\n"
-"Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory\n"
-"                            Toyohashi Univ. of Technology, JAPAN\n"
-"Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory\n"
-"            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-"%s";
-
-/*
- *  カーネル起動メッセージの出力（受け口関数）
- */
-void
-eBannerInitialize_main(EXINF exinf)
+Inline void
+eSIOPort_open(CELLIDX idx)
 {
-	syslog_msk_log(LOG_UPTO(LOG_DEBUG), LOG_UPTO(LOG_DEBUG));
-	syslog_5(LOG_NOTICE, banner,
-				(TKERNEL_PRVER >> 12) & 0x0fU,
-				(TKERNEL_PRVER >> 4) & 0xffU,
-				TKERNEL_PRVER & 0x0fU,
-				ATTR_targetName,
-				ATTR_copyrightNotice);
+	CELLCB	*p_cellcb = GET_CELLCB(idx);
+
+	/*
+	 *  デバイス依存のオープン処理
+	 */
+	cSIOPort_open();
+
+	/*
+	 *  SIOの割込みマスクを解除する．
+	 */
+	cInterruptRequest_enable();
+}
+
+/*
+ *  SIOポートのクローズ
+ */
+Inline void
+eSIOPort_close(CELLIDX idx)
+{
+	CELLCB	*p_cellcb = GET_CELLCB(idx);
+
+	/*
+	 *  デバイス依存のクローズ処理
+	 */
+	cSIOPort_close();
+
+	/*
+	 *  SIOの割込みをマスクする．
+	 */
+	cInterruptRequest_disable();
+}
+
+/*
+ *  SIOポートへの文字送信
+ */
+Inline bool_t
+eSIOPort_putChar(CELLIDX idx, char c)
+{
+	CELLCB	*p_cellcb = GET_CELLCB(idx);
+
+	return(cSIOPort_putChar(c));
+}
+
+/*
+ *  SIOポートからの文字受信
+ */
+Inline int_t
+eSIOPort_getChar(CELLIDX idx)
+{
+	CELLCB	*p_cellcb = GET_CELLCB(idx);
+
+	return(cSIOPort_getChar());
+}
+
+/*
+ *  SIOポートからのコールバックの許可
+ */
+Inline void
+eSIOPort_enableCBR(CELLIDX idx, uint_t cbrtn)
+{
+	CELLCB	*p_cellcb = GET_CELLCB(idx);
+
+	cSIOPort_enableCBR(cbrtn);
+}
+
+/*
+ *  SIOポートからのコールバックの禁止
+ */
+Inline void
+eSIOPort_disableCBR(CELLIDX idx, uint_t cbrtn)
+{
+	CELLCB	*p_cellcb = GET_CELLCB(idx);
+
+	cSIOPort_disableCBR(cbrtn);
+}
+
+/*
+ *  SIOポートからの送信可能コールバック
+ */
+Inline void
+eiSIOCBR_readySend(CELLIDX idx)
+{
+	CELLCB	*p_cellcb = GET_CELLCB(idx);
+
+	if (is_ciSIOCBR_joined()) {
+		ciSIOCBR_readySend();
+	}
+}
+
+/*
+ *  SIOポートからの受信通知コールバック
+ */
+Inline void
+eiSIOCBR_readyReceive(CELLIDX idx)
+{
+	CELLCB	*p_cellcb = GET_CELLCB(idx);
+	
+	if (is_ciSIOCBR_joined()) {
+		ciSIOCBR_readyReceive();
+	}
 }

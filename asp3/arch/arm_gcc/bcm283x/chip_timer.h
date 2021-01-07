@@ -5,7 +5,7 @@
  * 
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2005-2015 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,39 +37,84 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tBannerMain.c 1437 2020-05-20 12:12:16Z ertl-hiro $
+ *  $Id: chip_timer.h 537 2016-09-24 00:00:00Z azo $
  */
 
 /*
- *		カーネル起動メッセージ出力の本体
+ *		タイマドライバ（BCM283X用）
+ *
+ *  2つのタイマを使って高分解能タイマを実現する．具体的には，
+ *  カウンタを現在時刻の管理のために用い，タイマを
+ *  相対時間割込みの発生のために用いる．
  */
 
-#include "tBannerMain_tecsgen.h"
-#include <t_syslog.h>
+#ifndef TOPPERS_CHIP_TIMER_H
+#define TOPPERS_CHIP_TIMER_H
 
-/*
- *  カーネル起動メッセージ
- */
-static const char banner[] = "\n"
-"TOPPERS/ASP3 Kernel Release %d.%X.%d for %s"
-" (" __DATE__ ", " __TIME__ ")\n"
-"Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory\n"
-"                            Toyohashi Univ. of Technology, JAPAN\n"
-"Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory\n"
-"            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-"%s";
+#include <sil.h>
+#include "bcm283x.h"
 
 /*
- *  カーネル起動メッセージの出力（受け口関数）
+ *  タイマ割込みハンドラ登録のための定数
  */
-void
-eBannerInitialize_main(EXINF exinf)
+#define INHNO_TIMER		IRQ_STIMER	/* 割込みハンドラ番号 */
+#define INTNO_TIMER		IRQ_STIMER	/* 割込み番号 */
+#define INTPRI_TIMER	-7			/* 割込み優先度 */
+#define INTATR_TIMER	TA_NULL				/* 割込み属性 */
+
+#ifndef TOPPERS_MACRO_ONLY
+
+/*
+ *  高分解能タイマの起動処理
+ */
+extern void	target_hrt_initialize(intptr_t exinf);
+
+/*
+ *  高分解能タイマの停止処理
+ */
+extern void	target_hrt_terminate(intptr_t exinf);
+
+/*
+ *  高分解能タイマの現在のカウント値の読出し
+ */
+extern HRTCNT target_hrt_get_current(void);
+
+/*
+ *  高分解能タイマへの割込みタイミングの設定
+ *
+ *  高分解能タイマを，hrtcntで指定した値カウントアップしたら割込みを発
+ *  生させるように設定する．
+ */
+Inline void
+target_hrt_set_event(HRTCNT hrtcnt)
 {
-	syslog_msk_log(LOG_UPTO(LOG_DEBUG), LOG_UPTO(LOG_DEBUG));
-	syslog_5(LOG_NOTICE, banner,
-				(TKERNEL_PRVER >> 12) & 0x0fU,
-				(TKERNEL_PRVER >> 4) & 0xffU,
-				TKERNEL_PRVER & 0x0fU,
-				ATTR_targetName,
-				ATTR_copyrightNotice);
+	/*
+	 *  タイマのカウント値をhrtcntに設定する．
+	 */
+	sil_wrw_mem(BCM283X_STIMER_C1, sil_rew_mem(BCM283X_STIMER_CLO) + hrtcnt);
 }
+
+/*
+ *  高分解能タイマ割込みの要求
+ *
+ *  暫定的に，1μ秒後に高分解能タイマ割込みがかかるように設定しているが，
+ *  即座に割込みを要求する方法がわかれば（Set-pending Registerが使える
+ *  と思われる），それに差し換える．
+ */
+Inline void target_hrt_raise_event(void)
+{
+	target_hrt_set_event(1U);
+}
+
+/*
+ *  割込みタイミングに指定する最大値
+ */
+#define HRTCNT_BOUND	420000002U
+
+/*
+ *  高分解能タイマ割込みハンドラ
+ */
+extern void	target_hrt_handler(void);
+
+#endif /* TOPPERS_MACRO_ONLY */
+#endif /* TOPPERS_CHIP_TIMER_H */

@@ -3,9 +3,7 @@
  *      Toyohashi Open Platform for Embedded Real-Time Systems/
  *      Advanced Standard Profile Kernel
  * 
- *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
- *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2007-2015 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,39 +35,103 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tBannerMain.c 1437 2020-05-20 12:12:16Z ertl-hiro $
+ *  $Id: target_kernel_impl.c 509 2016-09-24 00:00:00Z azo $
  */
 
 /*
- *		カーネル起動メッセージ出力の本体
+ *		カーネルのターゲット依存部（Raspberry Pi用）
  */
 
-#include "tBannerMain_tecsgen.h"
-#include <t_syslog.h>
+#include "kernel_impl.h"
+#include <sil.h>
+#include "arm.h"
 
 /*
- *  カーネル起動メッセージ
+ *  システムログの低レベル出力のための初期化
+ *
+ *  セルタイプtPutLogUart0内に実装されている関数を直接呼び出す．
  */
-static const char banner[] = "\n"
-"TOPPERS/ASP3 Kernel Release %d.%X.%d for %s"
-" (" __DATE__ ", " __TIME__ ")\n"
-"Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory\n"
-"                            Toyohashi Univ. of Technology, JAPAN\n"
-"Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory\n"
-"            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-"%s";
+extern void	tPutLogUart0_initialize(void);
 
 /*
- *  カーネル起動メッセージの出力（受け口関数）
+ *  ターゲット依存の初期化
  */
 void
-eBannerInitialize_main(EXINF exinf)
+target_initialize(void)
 {
-	syslog_msk_log(LOG_UPTO(LOG_DEBUG), LOG_UPTO(LOG_DEBUG));
-	syslog_5(LOG_NOTICE, banner,
-				(TKERNEL_PRVER >> 12) & 0x0fU,
-				(TKERNEL_PRVER >> 4) & 0xffU,
-				TKERNEL_PRVER & 0x0fU,
-				ATTR_targetName,
-				ATTR_copyrightNotice);
+	/*
+	 *  GPIO設定．
+	 */
+	target_gpio_initialize();
+
+	/*
+	 *  チップ依存の初期化
+	 */
+	chip_initialize();
 }
+
+/*
+ *  ターゲット依存の終了処理
+ */
+void
+target_exit(void)
+{
+	extern void    software_term_hook(void);
+	void (*volatile fp)(void) = software_term_hook;
+
+	/*
+	 *  software_term_hookへのポインタを，一旦volatile指定のあるfpに代
+	 *  入してから使うのは，0との比較が最適化で削除されないようにするた
+	 *  めである．
+	 */
+	if (fp != 0) {
+		(*fp)();
+	}
+
+	/*
+	 *  チップ依存の終了処理
+	 */
+	chip_terminate();
+
+	while (true) ;
+}
+
+/*
+ *  カーネルの割り付けるメモリ領域の管理
+ *
+ *  TLSF（オープンソースのメモリ管理ライブラリ）を用いて実現．
+ */
+#ifdef TOPPERS_SUPPORT_DYNAMIC_CRE
+
+#include "tlsf.h"
+
+static bool_t	tlsf_initialized = false;
+
+void
+initialize_kmm(void)
+{
+	if (init_memory_pool(kmmsz, kmm) != -1) {
+		tlsf_initialized = true;
+	}
+}
+
+void *
+kernel_malloc(size_t size)
+{
+	if (tlsf_initialized) {
+		return(malloc_ex(size, kmm));
+	}
+	else {
+		return(NULL);
+	}
+}
+
+void
+kernel_free(void *ptr)
+{
+	if (tlsf_initialized) {
+		free_ex(ptr, kmm);
+	}
+}
+
+#endif /* TOPPERS_SUPPORT_DYNAMIC_CRE */

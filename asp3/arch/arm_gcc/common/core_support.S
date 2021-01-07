@@ -1291,13 +1291,15 @@ ALABEL(nk_exc_handler_2)
 	AALIGN(2)
 	AWEAK(_kernel_current_cpsr)
 ALABEL(_kernel_current_cpsr)
-	mrs		r0, cpsr_cxsf
+//	mrs		r0, cpsr_cxsf
+	mrs		r0, cpsr
 	bx		lr
 
 	AALIGN(2)
 	AWEAK(_kernel_set_cpsr)
 ALABEL(_kernel_set_cpsr)
-	msr		cpsr_cxsf, r0
+//	msr		cpsr_cxsf, r0
+	msr		cpsr, r0
 	bx		lr
 
 #endif /* __thumb__ */

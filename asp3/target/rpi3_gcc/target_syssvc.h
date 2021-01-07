@@ -5,7 +5,7 @@
  * 
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2005-2016 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,39 +37,32 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tBannerMain.c 1437 2020-05-20 12:12:16Z ertl-hiro $
+ *  $Id: target_syssvc.h 698 2016-09-24 00:00:00Z azo $
  */
 
 /*
- *		カーネル起動メッセージ出力の本体
+ *		システムサービスのターゲット依存部（Raspberry Pi用）
+ *
+ *  システムサービスのターゲット依存部のヘッダファイル．システムサービ
+ *  スのターゲット依存の設定は，できる限りコンポーネント記述ファイルで
+ *  記述し，このファイルに記述するものは最小限とする．
  */
 
-#include "tBannerMain_tecsgen.h"
-#include <t_syslog.h>
+#ifndef TOPPERS_TARGET_SYSSVC_H
+#define TOPPERS_TARGET_SYSSVC_H
 
-/*
- *  カーネル起動メッセージ
- */
-static const char banner[] = "\n"
-"TOPPERS/ASP3 Kernel Release %d.%X.%d for %s"
-" (" __DATE__ ", " __TIME__ ")\n"
-"Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory\n"
-"                            Toyohashi Univ. of Technology, JAPAN\n"
-"Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory\n"
-"            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-"%s";
+#include "bcm283x.h"
 
 /*
- *  カーネル起動メッセージの出力（受け口関数）
+ *  トレースログに関する設定
  */
-void
-eBannerInitialize_main(EXINF exinf)
-{
-	syslog_msk_log(LOG_UPTO(LOG_DEBUG), LOG_UPTO(LOG_DEBUG));
-	syslog_5(LOG_NOTICE, banner,
-				(TKERNEL_PRVER >> 12) & 0x0fU,
-				(TKERNEL_PRVER >> 4) & 0xffU,
-				TKERNEL_PRVER & 0x0fU,
-				ATTR_targetName,
-				ATTR_copyrightNotice);
-}
+#ifdef TOPPERS_ENABLE_TRACE
+#include "arch/tracelog/trace_log.h"
+#endif /* TOPPERS_ENABLE_TRACE */
+
+/*
+ *  コアで共通な定義（チップ依存部は飛ばす）
+ */
+#include "core_syssvc.h"
+
+#endif /* TOPPERS_TARGET_SYSSVC_H */

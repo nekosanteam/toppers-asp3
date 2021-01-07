@@ -1,11 +1,8 @@
 /*
- *  TOPPERS/ASP Kernel
- *      Toyohashi Open Platform for Embedded Real-Time Systems/
- *      Advanced Standard Profile Kernel
+ *  TOPPERS Software
+ *      Toyohashi Open Platform for Embedded Real-Time Systems
  * 
- *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
- *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2007-2016 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,39 +34,52 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tBannerMain.c 1437 2020-05-20 12:12:16Z ertl-hiro $
+ *  $Id: target_stddef.h 509 2016-09-24 00:00:00Z azo $
  */
 
 /*
- *		カーネル起動メッセージ出力の本体
+ *		t_stddef.hのターゲット依存部（Raspberry Pi 3用）
+ *
+ *  このヘッダファイルは，t_stddef.hの先頭でインクルードされる．他のファ
+ *  イルからは直接インクルードすることはない．他のヘッダファイルに先立っ
+ *  て処理されるため，他のヘッダファイルに依存してはならない．
  */
 
-#include "tBannerMain_tecsgen.h"
-#include <t_syslog.h>
-
-/*
- *  カーネル起動メッセージ
- */
-static const char banner[] = "\n"
-"TOPPERS/ASP3 Kernel Release %d.%X.%d for %s"
-" (" __DATE__ ", " __TIME__ ")\n"
-"Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory\n"
-"                            Toyohashi Univ. of Technology, JAPAN\n"
-"Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory\n"
-"            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-"%s";
+#ifndef TOPPERS_TARGET_STDDEF_H
+#define TOPPERS_TARGET_STDDEF_H
 
 /*
- *  カーネル起動メッセージの出力（受け口関数）
+ *  ターゲットを識別するためのマクロの定義
  */
-void
-eBannerInitialize_main(EXINF exinf)
+#define TOPPERS_RP3               /* システム略称 */
+
+/*
+ *  チッブで共通な定義
+ */
+#include "chip_stddef.h"
+
+/*
+ *  開発環境で共通な定義
+ * 
+ *  開発環境でstdint.hが用意されている場合には，TOPPERS_STDINT_TYPE1の
+ *  マクロ定義を削除し，stdint.hをインクルードすればよい．  
+ */
+#define TOPPERS_STDINT_TYPE1
+#define TOPPERS_STDFLOAT_TYPE1
+#include "tool_stddef.h"
+
+/*
+ *  アサーションの失敗時の実行中断処理
+ */
+#ifndef TOPPERS_MACRO_ONLY
+#ifndef TECSGEN
+
+Inline void
+TOPPERS_assert_abort(void)
 {
-	syslog_msk_log(LOG_UPTO(LOG_DEBUG), LOG_UPTO(LOG_DEBUG));
-	syslog_5(LOG_NOTICE, banner,
-				(TKERNEL_PRVER >> 12) & 0x0fU,
-				(TKERNEL_PRVER >> 4) & 0xffU,
-				TKERNEL_PRVER & 0x0fU,
-				ATTR_targetName,
-				ATTR_copyrightNotice);
+	while (1) ;
 }
+
+#endif /* TECSGEN */
+#endif /* TOPPERS_MACRO_ONLY */
+#endif /* TOPPERS_TARGET_STDDEF_H */

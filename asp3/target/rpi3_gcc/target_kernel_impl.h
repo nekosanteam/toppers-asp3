@@ -5,7 +5,7 @@
  * 
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2006-2016 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,39 +37,60 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tBannerMain.c 1437 2020-05-20 12:12:16Z ertl-hiro $
+ *  $Id: target_kernel_impl.h 704 2016-09-24 00:00:00Z azo $
  */
 
 /*
- *		カーネル起動メッセージ出力の本体
+ *		カーネルのターゲット依存部に関する定義（Raspberry Pi用）
+ *
+ *  カーネルのターゲット依存部のヘッダファイル．kernel_impl.hのターゲッ
+ *  ト依存部の位置付けとなる．
  */
 
-#include "tBannerMain_tecsgen.h"
-#include <t_syslog.h>
-
-/*
- *  カーネル起動メッセージ
- */
-static const char banner[] = "\n"
-"TOPPERS/ASP3 Kernel Release %d.%X.%d for %s"
-" (" __DATE__ ", " __TIME__ ")\n"
-"Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory\n"
-"                            Toyohashi Univ. of Technology, JAPAN\n"
-"Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory\n"
-"            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-"%s";
+#ifndef TOPPERS_TARGET_KERNEL_IMPL_H
+#define TOPPERS_TARGET_KERNEL_IMPL_H
 
 /*
- *  カーネル起動メッセージの出力（受け口関数）
+ *  ターゲットのハードウェア資源の定義
  */
-void
-eBannerInitialize_main(EXINF exinf)
-{
-	syslog_msk_log(LOG_UPTO(LOG_DEBUG), LOG_UPTO(LOG_DEBUG));
-	syslog_5(LOG_NOTICE, banner,
-				(TKERNEL_PRVER >> 12) & 0x0fU,
-				(TKERNEL_PRVER >> 4) & 0xffU,
-				TKERNEL_PRVER & 0x0fU,
-				ATTR_targetName,
-				ATTR_copyrightNotice);
-}
+#include "bcm283x.h"
+
+/*
+ *  トレースログに関する設定
+ */
+#ifdef TOPPERS_ENABLE_TRACE
+#include "arch/tracelog/trace_log.h"
+#endif /* TOPPERS_ENABLE_TRACE */
+
+/*
+ *  デフォルトの非タスクコンテキスト用のスタック領域の定義
+ */
+#define DEFAULT_ISTKSZ	0x2000U
+
+/*
+ *  微少時間待ちのための定義（本来はSILのターゲット依存部）
+ */
+#define SIL_DLY_TIM1	26
+#define SIL_DLY_TIM2	2
+
+/*
+ *  チップ依存部（BCM283X用）
+ */
+#include "chip_kernel_impl.h"
+
+#ifndef TOPPERS_MACRO_ONLY
+
+/*
+ *  ターゲットシステム依存の初期化
+ */
+extern void	target_initialize(void);
+
+/*
+ *  ターゲットシステムの終了
+ *
+ *  システムを終了する時に使う．
+ */
+extern void	target_exit(void) NoReturn;
+
+#endif /* TOPPERS_MACRO_ONLY */
+#endif /* TOPPERS_TARGET_KERNEL_IMPL_H */

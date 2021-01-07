@@ -1,11 +1,8 @@
 /*
- *  TOPPERS/ASP Kernel
- *      Toyohashi Open Platform for Embedded Real-Time Systems/
- *      Advanced Standard Profile Kernel
+ *  TOPPERS Software
+ *      Toyohashi Open Platform for Embedded Real-Time Systems
  * 
- *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
- *                              Toyohashi Univ. of Technology, JAPAN
- *  Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory
+ *  Copyright (C) 2007-2015 by Embedded and Real-Time Systems Laboratory
  *              Graduate School of Information Science, Nagoya Univ., JAPAN
  * 
  *  上記著作権者は，以下の(1)〜(4)の条件を満たす場合に限り，本ソフトウェ
@@ -37,39 +34,38 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tBannerMain.c 1437 2020-05-20 12:12:16Z ertl-hiro $
+ *  $Id: target_sil.h 362 2016-09-24 00:00:00Z azo $
  */
 
 /*
- *		カーネル起動メッセージ出力の本体
+ *		sil.hのターゲット依存部（Raspberry Pi用）
+ *
+ *  このヘッダファイルは，sil.hからインクルードされる．他のファイルから
+ *  直接インクルードすることはない．このファイルをインクルードする前に，
+ *  t_stddef.hがインクルードされるので，それに依存してもよい．
  */
 
-#include "tBannerMain_tecsgen.h"
-#include <t_syslog.h>
-
-/*
- *  カーネル起動メッセージ
- */
-static const char banner[] = "\n"
-"TOPPERS/ASP3 Kernel Release %d.%X.%d for %s"
-" (" __DATE__ ", " __TIME__ ")\n"
-"Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory\n"
-"                            Toyohashi Univ. of Technology, JAPAN\n"
-"Copyright (C) 2004-2020 by Embedded and Real-Time Systems Laboratory\n"
-"            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-"%s";
+#ifndef TOPPERS_TARGET_SIL_H
+#define TOPPERS_TARGET_SIL_H
 
 /*
- *  カーネル起動メッセージの出力（受け口関数）
+ *  プロセッサのエンディアン
  */
-void
-eBannerInitialize_main(EXINF exinf)
-{
-	syslog_msk_log(LOG_UPTO(LOG_DEBUG), LOG_UPTO(LOG_DEBUG));
-	syslog_5(LOG_NOTICE, banner,
-				(TKERNEL_PRVER >> 12) & 0x0fU,
-				(TKERNEL_PRVER >> 4) & 0xffU,
-				TKERNEL_PRVER & 0x0fU,
-				ATTR_targetName,
-				ATTR_copyrightNotice);
-}
+#define SIL_ENDIAN_LITTLE
+
+/*
+ *  UARTの選択．RP3ではUART0は不可．
+ */
+/* arch/arm_gcc/bcm283x/bcm283x.h の切り替えも必要 */
+#define BCM283X_USE_UART 1
+/*
+ *  UARTのFIFOを有効にする．（UART0では有効にすると1Byte割り込みが出来なくなる）
+ */
+#define BCM283X_UART_ENABLE_FIFO
+
+/*
+ *  コアで共通な定義（チップ依存部は飛ばす）
+ */
+#include "core_sil.h"
+
+#endif /* TOPPERS_TARGET_SIL_H */
