@@ -1,18 +1,18 @@
 #
-#		Makefileのターゲット依存部（Raspberry Pi 3用）
+#		Makefileのターゲット依存部（Raspberry Pi 3(64bit)用）
 #
-#  $Id: Makefile.target  $
+#  $Id:  $
 # 
 
 #
 #  システム名，チップ名，コア名，開発環境名の定義
 #
-SYS = rpi3
+SYS = rpi3_64
 CHIP = bcm283x
-CORE = arm
+CORE = arm64
 TOOL = gcc
 ifndef GCC_TARGET
-  GCC_TARGET = arm-linux-gnueabihf
+  GCC_TARGET = aarch64-linux-gnu
 endif
 
 #
@@ -25,7 +25,7 @@ CDEFS := $(CDEFS) -DTOPPERS_USE_BCM2837
 #
 INCLUDES := $(INCLUDES) -I$(TARGETDIR)
 COPTS := $(COPTS) -mcpu=cortex-a53
-CDEFS := $(CDEFS) -D__TARGET_ARCH_ARM=7 -fno-stack-protector
+CDEFS := $(CDEFS) -D__TARGET_ARCH_ARM=8 -fno-stack-protector
 LDFLAGS := $(LDFLAGS) -mcpu=cortex-a53
 
 #
@@ -52,15 +52,15 @@ endif
 #
 #  リンカスクリプトの定義
 #
-LDSCRIPT = $(TARGETDIR)/rpi3.ld
+LDSCRIPT = $(TARGETDIR)/rpi3_64.ld
 
 #   Raspberry Pi 実行ファイルの生成。
-kernel7.img: $(OBJFILE)
-	$(OBJCOPY) -O binary -S $(OBJFILE) kernel7.img
+kernel8.img: $(OBJFILE)
+	$(OBJCOPY) -O binary -S $(OBJFILE) kernel8.img
 
 .PHONY: qemu
-qemu: kernel7.img
-	qemu-system-arm -M raspi2 -display none -serial null -serial stdio -kernel kernel7.img
+qemu: kernel8.img
+	qemu-system-aarch64 -M raspi3 -display none -serial null -serial stdio -kernel kernel8.img
 
 #
 #  チップ依存部

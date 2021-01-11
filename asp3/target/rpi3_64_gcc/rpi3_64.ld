@@ -1,9 +1,9 @@
 /*
- *  $Id: rp3.ld 679 2016-09-24 00:00:00Z azo $
+ *  $Id: rpi3_64.ld  $
  */
 
-OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm","elf32-littlearm") 
-OUTPUT_ARCH(arm)
+OUTPUT_FORMAT("elf64-littlearm", "elf64-bigarm","elf64-littlearm") 
+OUTPUT_ARCH(aarch64)
 
 PROVIDE(hardware_init_hook = 0);
 PROVIDE(software_init_hook = 0);
@@ -17,7 +17,7 @@ PHDRS {
 }
 
 SECTIONS {
-	. = SIZEOF_HEADERS ;
+	. = 0x00080000 ;
 	.vector ALIGN(4) : {
 		__start_vector = .;
 		*(.vector)

@@ -1,0 +1,17 @@
+# -*- coding: utf-8 -*-
+#
+#		パス2の生成スクリプトのターゲット依存部（ARMv7-A (Qemu) 用）
+#
+#  $Id: target_kernel.trb $
+#
+
+# 
+#  使用できる割込み番号とそれに対応する割込みハンドラ番号
+# 
+$INTNO_VALID = [ *(0..127) ]
+$INHNO_VALID = $INTNO_VALID
+
+#
+#  生成スクリプトのチップ依存部
+#
+IncludeTrb("core_kernel.trb")
