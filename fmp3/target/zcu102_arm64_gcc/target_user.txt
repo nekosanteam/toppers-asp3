@@ -1,0 +1,100 @@
+=====================================================================
+                     ZYNQMP_A53(AArch64)ターゲット依存部
+                            2018-2020 (C) Shinya Honda honda@ertl.jp                     
+                                  Last Modified:2020 Nov 26 16:14:50
+=====================================================================
+
+○概要
+
+ZYNQMP_A53依存部は，Xilinx社のZynq Ultrascale+ MPSoC のCortex-A53の
+AArch64モードをサポートしている．サポートしているプロセッサ数は，1～4
+個であり，ディフォルトでは4個で動作する．
+
+現状サポートしているボードは次の通りである．
+
+●ボード
+
+動作確認を行ったボードは次の通りである．
+
+・Xilinx ZCU102 Production
+
+●Xilinx SDK
+
+動作確認したXilinx SDKのバージョンは次の通りである．  
+
+  - Xilinx SDK (>2018.2)
+  
+●コンパイラ
+
+動作確認を行ったARMから公開されているGCCである．
+
+   aarch64-none-eabi-gcc.exe
+   
+   gcc version 9.2.1 20191025 (GNU Toolchain for the A-profile Architecture 9.2-2020.02 (arm-9.10))
+
+●デバッグ環境
+
+デバッグ環境としては，京都マイクロコンピュータ製のPartner-Jet2 による
+デバッグの動作確認を行った．
+
+●実行環境
+
+Partner-Jet2を使用する場合は，本カーネルはPLLやDDR等の初期化はu-bootで
+実施することを前提としている．
+
+実行・デバッグ手法については，FMPの以下のパッケージ
+
+Zynq UltraScale+ MPSoC Cortex-R5 (Xilinx社) 簡易パッケージ 
+
+の以下のフォルダを参考のこと．
+
+../zynqmp_r5_gcc/doc/tools.txt
+
+●プロセッサ数
+
+実行環境・デバッグ環境としては， Xilnx SDK 付属の xsctないし，京都マイ
+クロコンピュータ製のPartner-Jet2，QEMU をサポートしている．
+
+
+○システム構築手順
+
+ZYNQMP_A53用のFMP3カーネルを構築する手順は，「TOPPERS/FMP3カーネル ユ
+ーザーズマニュアル」の「３．クイックスタートガイド」の章に記述されてい
+る通りである．
+
+シリアルドライバを使用する際には以下のオプションでシリアルドライバと各
+種システムサービスをビルド対象とする．
+
+configure.rb -T zcu102_arm64_gcc -w -S "syslog.o banner.o serial.o chip_serial.o logtask.o xuartps.o"
+                         
+
+○カーネルの使用リソース
+
+プロセッサ毎にカーネルは以下のリソースを使用する．
+
+・タイマ
+  内蔵のジェネリックタイマーを使用する．
+  
+・UART
+  Makefile.target の以下のマクロによって設定可能である．
+  ポート数
+   TNUM_SIOP = 1 or 2
+   
+  SIOP0(ポート) とするXUART
+   SIOP0 = XUART0 or  XUART1 
+  
+・プロセッサ間割込み
+  0番と1番のプロセッサ間割込みを使用する．
+
+・メモリ
+  DDRを使用．
+  VECTOR    : 0x00000000 
+  TEXT/DATA : 0x00100000
+
+
+○変更履歴
+
+2020/07/22
+・最初のリリース
+
+以上．
